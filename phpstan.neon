@@ -12,7 +12,7 @@ parameters:
         objectManagerLoader: build/phpstan/doctrine-orm-bootstrap.php
 
     paths:
-        - src
+        - Taremaku
         - tests
 
     ignoreErrors:
@@ -28,6 +28,3 @@ parameters:
             message: '#Call to function#'
             paths:
                 - tests/bootstrap.php
-
-    bootstrapFiles:
-        - vendor/bin/.phpunit/phpunit/vendor/autoload.php

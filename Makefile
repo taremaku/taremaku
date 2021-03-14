@@ -1,5 +1,4 @@
 build:
-	$(MAKE) prepare-test
 	$(MAKE) analyze
 	$(MAKE) tests
 
@@ -13,6 +12,7 @@ translations:
 
 .PHONY: tests
 tests:
+	$(MAKE) prepare-test
 	php bin/pest
 
 analyze:
