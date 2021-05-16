@@ -4,7 +4,7 @@ on:
   pull_request:
 
 env:
-  APP_DEV: ${{ secrets.APP_DEV }}
+  APP_ENV: ${{ secrets.APP_ENV }}
   PROJECT_HOST: ${{ secrets.PROJECT_HOST }}
   PROJECT_NAME: ${{ secrets.PROJECT_NAME }}
   SERVER_NAME: ${{ secrets.SERVER_NAME }}
@@ -48,7 +48,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-versions }}
           extensions: mbstring, xml, ctype, iconv, intl
-          coverage: xdebug
+#          coverage: xdebug
       - name: Get composer cache directory
         id: composer-cache
         run: echo "::set-output name=dir::$(composer config cache-files-dir)"
