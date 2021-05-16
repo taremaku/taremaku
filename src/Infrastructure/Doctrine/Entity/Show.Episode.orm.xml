@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                    https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+    
+    <entity name="Taremaku\Domain\Show\Episode" table="episode">
+        <id name="id" type="integer" column="id">
+            <generator strategy="AUTO" />
+        </id>
+
+        <field name="name" column="name" type="string" length="255"/>
+        <field name="number" column="number" type="integer"/>
+        <field name="runtime" column="runtime" type="integer" nullable="true"/>
+        <field name="summary" column="summary" type="text" nullable="true" />
+        <field name="airstamp" column="airstamp" type="datetime_immutable" />
+        <field name="image" column="image" type="string" length="255" nullable="true" />
+        <field name="createdAt" column="created_at" type="datetime_immutable" />
+        <field name="updatedAt" column="updated_at" type="datetime_immutable" />
+
+        <one-to-many field="followings" target-entity="Taremaku\Domain\Show\Following" mapped-by="episode" />
+
+        <many-to-one field="season" target-entity="Taremaku\Domain\Show\Season" inversed-by="episodes" fetch="LAZY">
+            <join-column name="season_id" referenced-column-name="id" />
+        </many-to-one>
+    </entity>
+
+</doctrine-mapping>
