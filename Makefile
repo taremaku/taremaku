@@ -16,7 +16,6 @@ tests:
 	php bin/pest
 
 analyze:
-	#composer valid
 	php bin/console doctrine:schema:valid --skip-sync --env=test
 	vendor/bin/phpstan analyse
 	php bin/ecs check
