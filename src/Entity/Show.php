@@ -19,6 +19,10 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ApiResource]
 class Show
 {
+    public const STATUS_IN_DEVELOPMENT = 0;
+    public const STATUS_RUNNING = 1;
+    public const STATUS_ENDED = 2;
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
@@ -35,7 +39,7 @@ class Show
     /**
      * @ORM\Column(type="text", nullable=true)
      */
-    private ?string $summary;
+    private ?string $summary = null;
 
     /**
      * @ORM\Column(type="integer")
@@ -46,22 +50,22 @@ class Show
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private ?string $poster;
+    private ?string $poster = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private ?string $website;
+    private ?string $website = null;
 
     /**
-     * @ORM\Column(type="integer", nullable=true)
+     * @ORM\Column(type="float", nullable=true)
      */
-    private ?int $rating;
+    private ?float $rating = null;
 
     /**
      * @ORM\Column(type="string", length=16, nullable=true)
      */
-    private ?string $language;
+    private ?string $language = null;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -71,27 +75,32 @@ class Show
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
-    private ?int $runtime;
+    private ?int $runtime = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private ?string $premiered;
+    private ?string $premiered = null;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
-    private ?int $idTvmaze;
+    private ?int $idTvmaze = null;
+
+    /**
+     * @ORM\Column(type="string", length=8, nullable=true)
+     */
+    private ?string $idImdb = null;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
-    private ?int $idImdb;
+    private ?int $idTheTvDb = null;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
-    private ?int $apiUpdate;
+    private ?int $apiUpdate = null;
 
     /**
      * @ORM\Column(type="datetime_immutable")
@@ -101,7 +110,7 @@ class Show
     /**
      * @ORM\Column(type="datetime", nullable=true)
      */
-    private ?DateTime $updatedAt;
+    private ?DateTime $updatedAt = null;
 
     /**
      * @var Collection|Season[]
@@ -207,14 +216,15 @@ class Show
         return $this;
     }
 
-    public function getRating(): ?int
+    public function getRating(): ?float
     {
         return $this->rating;
     }
 
-    public function setRating(?int $rating): self
+    public function setRating(?float $rating): self
     {
         $this->rating = $rating;
+
         return $this;
     }
 
@@ -273,15 +283,25 @@ class Show
         return $this;
     }
 
-    public function getIdImdb(): ?int
+    public function getIdImdb(): ?string
     {
         return $this->idImdb;
     }
 
-    public function setIdImdb(?int $idImdb): self
+    public function setIdImdb(?string $idImdb): self
     {
         $this->idImdb = $idImdb;
         return $this;
+    }
+
+    public function getIdTheTvDb(): ?int
+    {
+        return $this->idTheTvDb;
+    }
+
+    public function setIdTheTvDb(?int $idTheTvDb): void
+    {
+        $this->idTheTvDb = $idTheTvDb;
     }
 
     public function getApiUpdate(): ?int

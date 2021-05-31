@@ -51,6 +51,16 @@ class Episode
     private ?DateTime $airstamp;
 
     /**
+     * @ORM\Column(type="date", nullable=true)
+     */
+    private ?DateTime $airdate;
+
+    /**
+     * @ORM\Column(type="time", nullable=true)
+     */
+    private ?DateTime $airtime;
+
+    /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $image;
@@ -152,6 +162,26 @@ class Episode
         $this->airstamp = $airstamp;
 
         return $this;
+    }
+
+    public function getAirdate(): ?DateTime
+    {
+        return $this->airdate;
+    }
+
+    public function setAirdate(?DateTime $airdate): void
+    {
+        $this->airdate = $airdate;
+    }
+
+    public function getAirtime(): ?DateTime
+    {
+        return $this->airtime;
+    }
+
+    public function setAirtime(?DateTime $airtime): void
+    {
+        $this->airtime = $airtime;
     }
 
     public function getImage(): ?string

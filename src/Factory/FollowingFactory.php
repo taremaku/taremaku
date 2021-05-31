@@ -2,7 +2,7 @@
 
 namespace App\Factory;
 
-use App\Domain\Show\Following;
+use App\Entity\Following;
 use Zenstruck\Foundry\ModelFactory;
 use Zenstruck\Foundry\Proxy;
 

@@ -31,14 +31,14 @@
         "symfony/monolog-bundle": "^3.1",
         "symfony/notifier": "*",
         "symfony/process": "*",
-        "symfony/property-access": "5.2.*",
-        "symfony/property-info": "5.2.*",
-        "symfony/proxy-manager-bridge": "5.2.*",
+        "symfony/property-access": "*",
+        "symfony/property-info": "*",
+        "symfony/proxy-manager-bridge": "*",
         "symfony/security-bundle": "*",
-        "symfony/serializer": "5.2.*",
+        "symfony/serializer": "*",
         "symfony/string": "*",
         "symfony/translation": "*",
-        "symfony/twig-bundle": "^5.2",
+        "symfony/twig-bundle": "^5.3",
         "symfony/validator": "*",
         "symfony/web-link": "*",
         "symfony/yaml": "*",
@@ -47,6 +47,7 @@
         "webonyx/graphql-php": "^14.5"
     },
     "require-dev": {
+        "doctrine/doctrine-fixtures-bundle": "^3.4",
         "pestphp/pest": "^1.0",
         "phpstan/extension-installer": "^1.1",
         "phpstan/phpstan": "^0.12.70",
@@ -107,7 +108,7 @@
     "extra": {
         "symfony": {
             "allow-contrib": false,
-            "require": "5.2.*"
+            "require": "5.3.*"
         }
     }
 }

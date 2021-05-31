@@ -2,7 +2,7 @@
 
 namespace App\Factory;
 
-use App\Domain\Show\Network;
+use App\Entity\Network;
 use Zenstruck\Foundry\ModelFactory;
 use Zenstruck\Foundry\Proxy;
 

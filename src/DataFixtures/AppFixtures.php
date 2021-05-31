@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace App\DataFixtures;
 
-use App\Factory\EpisodeFactory;
 use App\Factory\RoleFactory;
-use App\Factory\ShowFactory;
 use App\Factory\UserFactory;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
@@ -35,7 +33,7 @@ class AppFixtures extends Fixture
             ]
         );
 
-        UserFactory::createMany(3, function() {
+        UserFactory::createMany(3, function () {
             return [
                 'createdAt' => new \DateTimeImmutable(),
                 'role' => RoleFactory::random()

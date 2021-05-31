@@ -44,6 +44,7 @@ class User
     /**
      * @ORM\Column(type="string", nullable=true)
      */
+    #[Assert\NotCompromisedPassword]
     private ?string $plainPassword = null;
 
     /**

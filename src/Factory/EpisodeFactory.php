@@ -2,7 +2,7 @@
 
 namespace App\Factory;
 
-use App\Domain\Show\Episode;
+use App\Entity\Episode;
 use Zenstruck\Foundry\ModelFactory;
 use Zenstruck\Foundry\Proxy;
 

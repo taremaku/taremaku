@@ -2,7 +2,7 @@
 
 namespace App\Factory;
 
-use App\Domain\Show\Season;
+use App\Entity\Season;
 use Zenstruck\Foundry\ModelFactory;
 use Zenstruck\Foundry\Proxy;
 
