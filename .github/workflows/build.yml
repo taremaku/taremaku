@@ -58,5 +58,9 @@ jobs:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: ${{ runner.os }}-composer-
-      - name: Run build
-        run: make build
+      - name: Prepare test
+        run: make prepare-test
+      - name: Run analyze
+        run: make analyze
+      - name: Run tests
+        run: make tests
