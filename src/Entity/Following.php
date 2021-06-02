@@ -10,80 +10,51 @@ use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity
- * @ORM\HasLifecycleCallbacks()
- */
+#[ORM\Entity]
+#[ORM\HasLifecycleCallbacks]
 #[ApiResource]
 class Following
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
     private int $id;
 
-    /**
-     * @ORM\Column(type="datetime_immutable")
-     */
+    #[ORM\Column]
     private DateTimeImmutable $startDate;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
+    #[ORM\Column]
     private ?DateTime $endDate;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Column]
     #[Assert\NotBlank]
     private int $status;
 
-    /**
-     * @ORM\Column(type="datetime_immutable")
-     */
+    #[ORM\Column]
     private DateTimeImmutable $createdAt;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
+    #[ORM\Column]
     private ?DateTime $updatedAt;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="followings", fetch="EXTRA_LAZY")
-     */
+    #[ORM\ManyToOne(fetch: 'EXTRA_LAZY', inversedBy: 'followings')]
     #[Assert\NotBlank]
     private User $user;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Episode", inversedBy="followings", fetch="EXTRA_LAZY")
-     */
+    #[ORM\ManyToOne(fetch: 'EXTRA_LAZY', inversedBy: 'followings')]
     #[Assert\NotBlank]
     private Episode $episode;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Season", inversedBy="followings", fetch="EXTRA_LAZY")
-     */
+    #[ORM\ManyToOne(fetch: 'EXTRA_LAZY', inversedBy: 'followings')]
     #[Assert\NotBlank]
     private Season $season;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Show", inversedBy="followings", fetch="EXTRA_LAZY")
-     */
+    #[ORM\ManyToOne(fetch: 'EXTRA_LAZY', inversedBy: 'followings')]
     #[Assert\NotBlank]
     private Show $tvShow;
 
     public function getId(): int
     {
         return $this->id;
-    }
-
-    public function setId(int $id): self
-    {
-        $this->id = $id;
-
-        return $this;
     }
 
     public function getStartDate(): DateTimeImmutable

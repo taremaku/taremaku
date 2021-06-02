@@ -11,80 +11,53 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity
- * @ORM\HasLifecycleCallbacks()
- */
+#[ORM\Entity]
+#[ORM\HasLifecycleCallbacks]
 #[ApiResource]
 class Episode
 {
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
     private int $id;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column]
     private string $name;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Column]
     private int $number;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
+    #[ORM\Column]
     private ?int $runtime;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column]
     private ?string $summary;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
+    #[ORM\Column]
     private ?DateTime $airstamp;
 
-    /**
-     * @ORM\Column(type="date", nullable=true)
-     */
+    #[ORM\Column]
     private ?DateTime $airdate;
 
-    /**
-     * @ORM\Column(type="time", nullable=true)
-     */
+    #[ORM\Column]
     private ?DateTime $airtime;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column]
     private ?string $image;
 
-    /**
-     * @ORM\Column(type="datetime_immutable")
-     */
+    #[ORM\Column]
     private DateTimeImmutable $createdAt;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
+    #[ORM\Column]
     private ?DateTime $updatedAt;
 
     /**
      * @var Collection|Following[]
-     *
-     * @ORM\OneToMany(targetEntity="App\Entity\Following", mappedBy="episode")
      */
+    #[ORM\OneToMany(mappedBy: 'episode', targetEntity: Following::class)]
     private Collection $followings;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Season", inversedBy="episodes")
-     */
+    #[ORM\ManyToOne(inversedBy: 'episodes')]
     private Season $season;
 
     public function __construct()
@@ -95,13 +68,6 @@ class Episode
     public function getId(): int
     {
         return $this->id;
-    }
-
-    public function setId(int $id): self
-    {
-        $this->id = $id;
-
-        return $this;
     }
 
     public function getName(): string

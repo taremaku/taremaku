@@ -11,11 +11,10 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Doctrine\DBAL\Types\Types;
 
-/**
- * @ORM\Entity
- * @ORM\HasLifecycleCallbacks()
- */
+#[ORM\Entity]
+#[ORM\HasLifecycleCallbacks]
 #[ApiResource]
 class Show
 {
@@ -23,124 +22,77 @@ class Show
     public const STATUS_RUNNING = 1;
     public const STATUS_ENDED = 2;
 
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
     private int $id;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column]
     #[Assert\NotBlank]
     private string $name;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $summary = null;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Column(length: 1)]
     #[Assert\NotBlank]
     private int $status;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column]
     private ?string $poster = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column]
     private ?string $website = null;
 
-    /**
-     * @ORM\Column(type="float", nullable=true)
-     */
+    #[ORM\Column]
     private ?float $rating = null;
 
-    /**
-     * @ORM\Column(type="string", length=16, nullable=true)
-     */
+    #[ORM\Column(length: 16)]
     private ?string $language = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column]
     private string $slug;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
+    #[ORM\Column]
     private ?int $runtime = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column]
     private ?string $premiered = null;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
+    #[ORM\Column]
     private ?int $idTvmaze = null;
 
-    /**
-     * @ORM\Column(type="string", length=8, nullable=true)
-     */
+    #[ORM\Column(length: 8)]
     private ?string $idImdb = null;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
+    #[ORM\Column]
     private ?int $idTheTvDb = null;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
+    #[ORM\Column]
     private ?int $apiUpdate = null;
 
-    /**
-     * @ORM\Column(type="datetime_immutable")
-     */
+    #[ORM\Column]
     private DateTimeImmutable $createdAt;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
+    #[ORM\Column]
     private ?DateTime $updatedAt = null;
 
-    /**
-     * @var Collection|Season[]
-     *
-     * @ORM\OneToMany(targetEntity="App\Entity\Season", mappedBy="tvShow")
-     */
+    #[ORM\OneToMany(mappedBy: 'tvShow', targetEntity: Season::class)]
     private Collection $seasons;
 
-    /**
-     * @var Collection|Following[]
-     *
-     * @ORM\OneToMany(targetEntity="App\Entity\Following", mappedBy="tvShow")
-     */
+    #[ORM\OneToMany(mappedBy: 'tvShow', targetEntity: Following::class)]
     private Collection $followings;
 
     /**
      * @var Collection|Genre[]
-     *
-     * @ORM\ManyToMany(targetEntity="App\Entity\Genre", inversedBy="shows")
      */
+    #[ORM\ManyToMany(targetEntity: Following::class)]
     private Collection $genres;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Type", inversedBy="shows")
-     */
+    #[ORM\ManyToOne(inversedBy: 'shows')]
     private ?Type $type;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Network", inversedBy="shows")
-     */
+    #[ORM\ManyToOne(inversedBy: 'shows')]
     private ?Network $network;
 
     public function __construct()
@@ -153,12 +105,6 @@ class Show
     public function getId(): int
     {
         return $this->id;
-    }
-
-    public function setId(int $id): self
-    {
-        $this->id = $id;
-        return $this;
     }
 
     public function getName(): string

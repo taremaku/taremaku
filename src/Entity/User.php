@@ -12,72 +12,51 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity
- * @ORM\HasLifecycleCallbacks()
- */
+#[ORM\Entity]
+#[ORM\HasLifecycleCallbacks]
 #[ApiResource(
-    itemOperations: ['get', 'put', 'patch'],
     collectionOperations: ['get', 'post'],
+    itemOperations: ['get', 'put', 'patch'],
 )]
 class User
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
     private int $id;
 
-    /**
-     * @ORM\Column(type="string")
-     */
+    #[ORM\Column]
     #[Assert\NotBlank]
     private string $username;
 
-    /**
-     * @ORM\Column(type="string")
-     */
+    #[ORM\Column]
     #[Assert\NotBlank]
     private string $email;
 
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
+    #[ORM\Column]
     #[Assert\NotCompromisedPassword]
     private ?string $plainPassword = null;
 
-    /**
-     * @ORM\Column(type="string")
-     */
+    #[ORM\Column]
     private string $password;
 
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
+    #[ORM\Column]
     private ?string $avatar;
 
-    /**
-     * @ORM\Column(type="datetime_immutable")
-     */
+    #[ORM\Column]
     private DateTimeImmutable $createdAt;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
+    #[ORM\Column]
     private ?DateTime $updatedAt = null;
 
-    /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Role", mappedBy="users")
-     */
+    #[ORM\OneToMany(mappedBy: 'users', targetEntity: Role::class)]
     #[Assert\NotBlank]
     private Role $role;
 
     /**
      * @var Collection|Following[]
-     *
-     * @ORM\ManyToOne(targetEntity="App\Entity\Following", inversedBy="users", fetch="EXTRA_LAZY")
      */
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Following::class, fetch: 'EXTRA_LAZY')]
     private Collection $followings;
 
     public function __construct()
@@ -88,13 +67,6 @@ class User
     public function getId(): int
     {
         return $this->id;
-    }
-
-    public function setId(int $id): self
-    {
-        $this->id = $id;
-
-        return $this;
     }
 
     public function getUsername(): string
