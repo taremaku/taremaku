@@ -2,7 +2,7 @@
 
 namespace App\Factory;
 
-use App\Domain\User\User;
+use App\Entity\User;
 use Zenstruck\Foundry\ModelFactory;
 use Zenstruck\Foundry\Proxy;
 
