@@ -6,12 +6,12 @@ namespace App\EventListener;
 
 use App\Entity\User;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasher;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UserChangePassword
 {
     public function __construct(
-        private UserPasswordHasher $passwordHasher
+        private UserPasswordHasherInterface $passwordHasher
     ) {
     }
 
