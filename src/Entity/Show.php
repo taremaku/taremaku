@@ -83,7 +83,7 @@ class Show
     #[ORM\OneToMany(mappedBy: 'tvShow', targetEntity: Following::class)]
     private Collection | array $followings;
 
-    #[ORM\ManyToMany(targetEntity: Following::class, inversedBy: 'shows')]
+    #[ORM\ManyToMany(targetEntity: Genre::class, inversedBy: 'shows')]
     private Collection | array $genres;
 
     #[ORM\ManyToOne(inversedBy: 'shows')]
