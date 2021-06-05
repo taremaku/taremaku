@@ -10,16 +10,21 @@ use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Serializable;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
+/**
+ * @method string getUserIdentifier()
+ */
 #[ORM\Entity]
 #[ORM\HasLifecycleCallbacks]
 #[ApiResource(
     collectionOperations: ['get', 'post'],
     itemOperations: ['get', 'put', 'patch'],
 )]
-class User implements PasswordAuthenticatedUserInterface
+class User implements UserInterface, PasswordAuthenticatedUserInterface, Serializable
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -111,7 +116,6 @@ class User implements PasswordAuthenticatedUserInterface
     public function setPassword(string $password): self
     {
         $this->password = $password;
-        $this->plainPassword = null;
 
         return $this;
     }
@@ -152,18 +156,6 @@ class User implements PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getRole(): Role
-    {
-        return $this->role;
-    }
-
-    public function setRole(Role $role): self
-    {
-        $this->role = $role;
-
-        return $this;
-    }
-
     public function getFollowings(): Collection
     {
         return $this->followings;
@@ -190,5 +182,59 @@ class User implements PasswordAuthenticatedUserInterface
         }
 
         return $this;
+    }
+
+    public function getRoles(): array
+    {
+        return [$this->getRole()->getCode()];
+    }
+
+    public function getRole(): Role
+    {
+        return $this->role;
+    }
+
+    public function setRole(Role $role): self
+    {
+        $this->role = $role;
+
+        return $this;
+    }
+
+    public function getSalt(): ?string
+    {
+        return null;
+    }
+
+    public function eraseCredentials(): void
+    {
+        $this->plainPassword = null;
+    }
+
+    public function __call(string $name, array $arguments): int
+    {
+        return $this->id;
+    }
+
+    public function serialize(): ?string
+    {
+        return serialize(
+            [
+                $this->id,
+                $this->username,
+                $this->password,
+                $this->role,
+            ]
+        );
+    }
+
+    public function unserialize($data): void
+    {
+        list(
+            $this->id,
+            $this->username,
+            $this->password,
+            $this->role,
+            ) = unserialize($data, ['allowed_classes' => false]);
     }
 }

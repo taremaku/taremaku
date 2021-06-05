@@ -20,11 +20,6 @@ class UserChangePassword
         $this->hashPassword($user);
     }
 
-    public function preUpdate(User $user, LifecycleEventArgs $event): void
-    {
-        $this->hashPassword($user);
-    }
-
     public function hashPassword(User $user): void
     {
         if (!$user->getPlainPassword()) {
@@ -37,5 +32,12 @@ class UserChangePassword
         );
 
         $user->setPassword($hashed);
+
+        $user->eraseCredentials();
+    }
+
+    public function preUpdate(User $user, LifecycleEventArgs $event): void
+    {
+        $this->hashPassword($user);
     }
 }
