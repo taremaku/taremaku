@@ -42,15 +42,9 @@ class Season
     #[ORM\Column]
     private DateTime $updatedAt;
 
-    /**
-     * @var Collection|Episode[]
-     */
     #[ORM\OneToMany(mappedBy: 'season', targetEntity: Episode::class)]
     private Collection $episodes;
 
-    /**
-     * @var Collection|Following[]
-     */
     #[ORM\OneToMany(mappedBy: 'season', targetEntity: Following::class)]
     private Collection $followings;
 

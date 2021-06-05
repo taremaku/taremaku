@@ -39,10 +39,7 @@ class Role
     #[ORM\Column]
     private ?DateTime $updatedAt;
 
-    /**
-     * @var Collection|User[]
-     */
-    #[ORM\ManyToOne(targetEntity: User::class, fetch: 'EXTRA_LAZY', inversedBy: 'role')]
+    #[ORM\OneToMany(mappedBy: 'role', targetEntity: User::class, fetch: 'EXTRA_LAZY')]
     private Collection $users;
 
     public function __construct()

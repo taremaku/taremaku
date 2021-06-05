@@ -49,13 +49,10 @@ class User
     #[ORM\Column]
     private ?DateTime $updatedAt = null;
 
-    #[ORM\OneToMany(mappedBy: 'users', targetEntity: Role::class)]
+    #[ORM\ManyToOne(, targetEntity: Role::class, inversedBy: 'users')]
     #[Assert\NotBlank]
     private Role $role;
 
-    /**
-     * @var Collection|Following[]
-     */
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Following::class, fetch: 'EXTRA_LAZY')]
     private Collection $followings;
 
