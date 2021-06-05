@@ -13,13 +13,12 @@ translations:
 .PHONY: tests
 tests:
 	$(MAKE) prepare-test
-	php bin/pest
+	php vendor/bin/pest
 
 analyze:
 	composer dump-autoload
 	php bin/console doctrine:schema:valid --skip-sync --env=test
-	#vendor/bin/phpstan analyse
-	php bin/ecs check
+	php vendor/bin/ecs check
 
 prepare-dev:
 	composer install --prefer-dist
