@@ -9,9 +9,9 @@ use DateTime;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-use Doctrine\DBAL\Types\Types;
 
 #[ORM\Entity]
 #[ORM\HasLifecycleCallbacks]
@@ -78,16 +78,13 @@ class Show
     private ?DateTime $updatedAt = null;
 
     #[ORM\OneToMany(mappedBy: 'tvShow', targetEntity: Season::class)]
-    private Collection $seasons;
+    private Collection | array $seasons;
 
     #[ORM\OneToMany(mappedBy: 'tvShow', targetEntity: Following::class)]
-    private Collection $followings;
+    private Collection | array $followings;
 
-    /**
-     * @var Collection|Genre[]
-     */
     #[ORM\ManyToMany(targetEntity: Following::class)]
-    private Collection $genres;
+    private Collection | array $genres;
 
     #[ORM\ManyToOne(inversedBy: 'shows')]
     private ?Type $type;
@@ -346,8 +343,8 @@ class Show
 
     public function addGenre(Genre $genre): self
     {
-        if (!$this->genre->contains($genre)) {
-            $this->genre[] = $genre;
+        if (!$this->genres->contains($genre)) {
+            $this->genres[] = $genre;
         }
 
         return $this;
@@ -355,8 +352,8 @@ class Show
 
     public function removeGenre(Genre $genre): self
     {
-        if ($this->genre->contains($genre)) {
-            $this->genre->removeElement($genre);
+        if ($this->genres->contains($genre)) {
+            $this->genres->removeElement($genre);
         }
 
         return $this;

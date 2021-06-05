@@ -35,11 +35,8 @@ class Genre
     #[ORM\Column(nullable: true)]
     private ?DateTime $updatedAt;
 
-    /**
-     * @var Collection|Show[]
-     */
-    #[ORM\ManyToMany(targetEntity: Show::class)]
-    private Collection $shows;
+    #[ORM\ManyToMany(targetEntity: Show::class, mappedBy: 'genres')]
+    private Collection | array $shows;
 
 
     public function __construct()

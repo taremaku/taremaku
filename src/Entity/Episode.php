@@ -58,7 +58,7 @@ class Episode
     private Collection $followings;
 
     #[ORM\ManyToOne(inversedBy: 'episodes')]
-    private Season $season;
+    private ?Season $season;
 
     public function __construct()
     {
@@ -195,7 +195,7 @@ class Episode
     {
         if (!$this->followings->contains($following)) {
             $this->followings[] = $following;
-            $following->setSeason($this);
+            $following->setEpisode($this);
         }
 
         return $this;
@@ -206,8 +206,8 @@ class Episode
         if ($this->followings->contains($following)) {
             $this->followings->removeElement($following);
             // set the owning side to null (unless already changed)
-            if ($following->getSeason() === $this) {
-                $following->setSeason(null);
+            if ($following->getEpisode() === $this) {
+                $following->setEpisode(null);
             }
         }
 

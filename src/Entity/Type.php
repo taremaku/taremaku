@@ -35,9 +35,6 @@ class Type
     #[ORM\Column(nullable: true)]
     private ?DateTime $updatedAt;
 
-    /**
-     * @var Collection|Show[]
-     */
     #[ORM\OneToMany(mappedBy: 'type', targetEntity: Show::class)]
     private Collection $shows;
 

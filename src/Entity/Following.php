@@ -38,19 +38,19 @@ class Following
 
     #[ORM\ManyToOne(fetch: 'EXTRA_LAZY', inversedBy: 'followings')]
     #[Assert\NotBlank]
-    private User $user;
+    private ?User $user;
 
     #[ORM\ManyToOne(fetch: 'EXTRA_LAZY', inversedBy: 'followings')]
     #[Assert\NotBlank]
-    private Episode $episode;
+    private ?Episode $episode;
 
     #[ORM\ManyToOne(fetch: 'EXTRA_LAZY', inversedBy: 'followings')]
     #[Assert\NotBlank]
-    private Season $season;
+    private ?Season $season;
 
     #[ORM\ManyToOne(fetch: 'EXTRA_LAZY', inversedBy: 'followings')]
     #[Assert\NotBlank]
-    private Show $tvShow;
+    private ?Show $tvShow;
 
     public function getId(): int
     {
@@ -128,7 +128,7 @@ class Following
         return $this->episode;
     }
 
-    public function setEpisode(Episode $episode): self
+    public function setEpisode(?Episode $episode): self
     {
         $this->episode = $episode;
         return $this;

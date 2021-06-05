@@ -40,7 +40,7 @@ class Role
     private ?DateTime $updatedAt;
 
     #[ORM\OneToMany(mappedBy: 'role', targetEntity: User::class, fetch: 'EXTRA_LAZY')]
-    private Collection $users;
+    private Collection | array $users;
 
     public function __construct()
     {

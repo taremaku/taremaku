@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20210605153351 extends AbstractMigration
+final class Version20210605161525 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -41,9 +41,6 @@ final class Version20210605153351 extends AbstractMigration
         $this->addSql('COMMENT ON COLUMN following.created_at IS \'(DC2Type:datetime_immutable)\'');
         $this->addSql('CREATE TABLE genre (id INT NOT NULL, name VARCHAR(32) NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, PRIMARY KEY(id))');
         $this->addSql('COMMENT ON COLUMN genre.created_at IS \'(DC2Type:datetime_immutable)\'');
-        $this->addSql('CREATE TABLE genre_show (genre_id INT NOT NULL, show_id INT NOT NULL, PRIMARY KEY(genre_id, show_id))');
-        $this->addSql('CREATE INDEX IDX_89E300F14296D31F ON genre_show (genre_id)');
-        $this->addSql('CREATE INDEX IDX_89E300F1D0C1FC64 ON genre_show (show_id)');
         $this->addSql('CREATE TABLE network (id INT NOT NULL, name VARCHAR(32) NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, PRIMARY KEY(id))');
         $this->addSql('COMMENT ON COLUMN network.created_at IS \'(DC2Type:datetime_immutable)\'');
         $this->addSql('CREATE TABLE role (id INT NOT NULL, name VARCHAR(32) NOT NULL, code VARCHAR(12) NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, PRIMARY KEY(id))');
@@ -68,8 +65,6 @@ final class Version20210605153351 extends AbstractMigration
         $this->addSql('ALTER TABLE following ADD CONSTRAINT FK_71BF8DE3362B62A0 FOREIGN KEY (episode_id) REFERENCES episode (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE following ADD CONSTRAINT FK_71BF8DE34EC001D1 FOREIGN KEY (season_id) REFERENCES season (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE following ADD CONSTRAINT FK_71BF8DE35E3A35BB FOREIGN KEY (tv_show_id) REFERENCES show (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
-        $this->addSql('ALTER TABLE genre_show ADD CONSTRAINT FK_89E300F14296D31F FOREIGN KEY (genre_id) REFERENCES genre (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
-        $this->addSql('ALTER TABLE genre_show ADD CONSTRAINT FK_89E300F1D0C1FC64 FOREIGN KEY (show_id) REFERENCES show (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE season ADD CONSTRAINT FK_F0E45BA95E3A35BB FOREIGN KEY (tv_show_id) REFERENCES show (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE show ADD CONSTRAINT FK_320ED901C54C8C93 FOREIGN KEY (type_id) REFERENCES type (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE show ADD CONSTRAINT FK_320ED90134128B91 FOREIGN KEY (network_id) REFERENCES network (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
@@ -84,13 +79,11 @@ final class Version20210605153351 extends AbstractMigration
         $this->addSql('CREATE SCHEMA public');
         $this->addSql('ALTER TABLE following DROP CONSTRAINT FK_71BF8DE3362B62A0');
         $this->addSql('ALTER TABLE show_following DROP CONSTRAINT FK_413316EB1816E3A3');
-        $this->addSql('ALTER TABLE genre_show DROP CONSTRAINT FK_89E300F14296D31F');
         $this->addSql('ALTER TABLE show DROP CONSTRAINT FK_320ED90134128B91');
         $this->addSql('ALTER TABLE "user" DROP CONSTRAINT FK_8D93D649D60322AC');
         $this->addSql('ALTER TABLE episode DROP CONSTRAINT FK_DDAA1CDA4EC001D1');
         $this->addSql('ALTER TABLE following DROP CONSTRAINT FK_71BF8DE34EC001D1');
         $this->addSql('ALTER TABLE following DROP CONSTRAINT FK_71BF8DE35E3A35BB');
-        $this->addSql('ALTER TABLE genre_show DROP CONSTRAINT FK_89E300F1D0C1FC64');
         $this->addSql('ALTER TABLE season DROP CONSTRAINT FK_F0E45BA95E3A35BB');
         $this->addSql('ALTER TABLE show_following DROP CONSTRAINT FK_413316EBD0C1FC64');
         $this->addSql('ALTER TABLE show DROP CONSTRAINT FK_320ED901C54C8C93');
@@ -107,7 +100,6 @@ final class Version20210605153351 extends AbstractMigration
         $this->addSql('DROP TABLE episode');
         $this->addSql('DROP TABLE following');
         $this->addSql('DROP TABLE genre');
-        $this->addSql('DROP TABLE genre_show');
         $this->addSql('DROP TABLE network');
         $this->addSql('DROP TABLE role');
         $this->addSql('DROP TABLE season');

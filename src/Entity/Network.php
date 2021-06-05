@@ -35,11 +35,8 @@ class Network
     #[ORM\Column(nullable: true)]
     private ?DateTime $updatedAt;
 
-    /**
-     * @var Collection|Show[]
-     */
     #[ORM\OneToMany(mappedBy: 'network', targetEntity: Show::class)]
-    private Collection $shows;
+    private Collection | array $shows;
 
     public function __construct()
     {
@@ -93,7 +90,7 @@ class Network
     {
         if (!$this->shows->contains($show)) {
             $this->shows[] = $show;
-            $show->addGenre($this);
+            $show->setNetwork($this);
         }
 
         return $this;
@@ -103,7 +100,7 @@ class Network
     {
         if ($this->shows->contains($show)) {
             $this->shows->removeElement($show);
-            $show->removeGenre($this);
+            $show->setNetwork(null);
         }
 
         return $this;

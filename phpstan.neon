@@ -12,7 +12,7 @@ parameters:
         objectManagerLoader: build/phpstan/doctrine-orm-bootstrap.php
 
     paths:
-        - Taremaku
+        - src
         - tests
 
     ignoreErrors:

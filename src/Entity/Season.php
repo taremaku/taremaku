@@ -43,10 +43,10 @@ class Season
     private ?DateTime $updatedAt;
 
     #[ORM\OneToMany(mappedBy: 'season', targetEntity: Episode::class)]
-    private Collection $episodes;
+    private Collection | array $episodes;
 
     #[ORM\OneToMany(mappedBy: 'season', targetEntity: Following::class)]
-    private Collection $followings;
+    private Collection | array $followings;
 
     #[ORM\ManyToOne(inversedBy: 'seasons')]
     private Show $tvShow;

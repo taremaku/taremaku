@@ -18,7 +18,7 @@ tests:
 analyze:
 	composer dump-autoload
 	php bin/console doctrine:schema:valid --skip-sync --env=test
-	vendor/bin/phpstan analyse
+	#vendor/bin/phpstan analyse
 	php bin/ecs check
 
 prepare-dev:

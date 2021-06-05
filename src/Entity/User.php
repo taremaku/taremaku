@@ -60,7 +60,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Seriali
     private Role $role;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Following::class, fetch: 'EXTRA_LAZY')]
-    private Collection $followings;
+    private Collection | array $followings;
 
     public function __construct()
     {
