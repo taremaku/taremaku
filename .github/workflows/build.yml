@@ -20,7 +20,7 @@ jobs:
       fail-fast: false
       matrix:
         operating-system: [ ubuntu-latest ]
-        php-versions: [ '7.4', '8.0' ]
+        php-versions: [ '8.0' ]
 
     services:
       postgres:
@@ -47,8 +47,10 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-versions }}
-          extensions: mbstring, xml, ctype, iconv, intl
+          extensions: mbstring, xml, ctype, iconv, intl, dom, filter, gd, iconv, json, pdo, pgsql
 #          coverage: xdebug
+        env:
+          update: true
       - name: Get composer cache directory
         id: composer-cache
         run: echo "::set-output name=dir::$(composer config cache-files-dir)"
@@ -58,5 +60,9 @@ jobs:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: ${{ runner.os }}-composer-
-      - name: Run build
-        run: make build
+      - name: Prepare test
+        run: make prepare-test
+      - name: Run analyze
+        run: make analyze
+      - name: Run tests
+        run: make tests

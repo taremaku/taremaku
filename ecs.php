@@ -5,6 +5,10 @@ use Symplify\EasyCodingStandard\ValueObject\Option;
 use Symplify\EasyCodingStandard\ValueObject\Set\SetList;
 
 return static function (ContainerConfigurator $containerConfigurator): void {
+    $containerConfigurator->import(SetList::CLEAN_CODE);
+    $containerConfigurator->import(SetList::PSR_12);
+    $containerConfigurator->import(SetList::DOCTRINE_ANNOTATIONS);
+
     $parameters = $containerConfigurator->parameters();
 
     $parameters->set(Option::PATHS, array(
@@ -13,12 +17,6 @@ return static function (ContainerConfigurator $containerConfigurator): void {
     ));
 
     $parameters->set(Option::CACHE_DIRECTORY, 'var/cache/.ecs_cache');
-
-    $parameters->set(Option::SETS, array(
-        SetList::CLEAN_CODE,
-        SetList::PSR_12,
-        SetList::DOCTRINE_ANNOTATIONS
-    ));
 
     $parameters->set(Option::SKIP, [
         __DIR__ . '*/bootstrap.php',

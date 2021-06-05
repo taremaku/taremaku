@@ -9,129 +9,87 @@ use DateTime;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity
- * @ORM\HasLifecycleCallbacks()
- */
+#[ORM\Entity]
+#[ORM\HasLifecycleCallbacks]
 #[ApiResource]
 class Show
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     * @ORM\Column(type="integer")
-     */
+    public const STATUS_IN_DEVELOPMENT = 0;
+    public const STATUS_RUNNING = 1;
+    public const STATUS_ENDED = 2;
+
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
     private int $id;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column]
     #[Assert\NotBlank]
     private string $name;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
-    private ?string $summary;
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $summary = null;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Column(length: 1)]
     #[Assert\NotBlank]
     private int $status;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private ?string $poster;
+    #[ORM\Column(nullable: true)]
+    private ?string $poster = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private ?string $website;
+    #[ORM\Column(nullable: true)]
+    private ?string $website = null;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private ?int $rating;
+    #[ORM\Column(nullable: true)]
+    private ?float $rating = null;
 
-    /**
-     * @ORM\Column(type="string", length=16, nullable=true)
-     */
-    private ?string $language;
+    #[ORM\Column(length: 16)]
+    private ?string $language = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(nullable: true)]
     private string $slug;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private ?int $runtime;
+    #[ORM\Column(nullable: true)]
+    private ?int $runtime = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private ?string $premiered;
+    #[ORM\Column(nullable: true)]
+    private ?string $premiered = null;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private ?int $idTvmaze;
+    #[ORM\Column(nullable: true)]
+    private ?int $idTvmaze = null;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private ?int $idImdb;
+    #[ORM\Column(length: 8)]
+    private ?string $idImdb = null;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private ?int $apiUpdate;
+    #[ORM\Column(nullable: true)]
+    private ?int $idTheTvDb = null;
 
-    /**
-     * @ORM\Column(type="datetime_immutable")
-     */
+    #[ORM\Column(nullable: true)]
+    private ?int $apiUpdate = null;
+
+    #[ORM\Column]
     private DateTimeImmutable $createdAt;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private ?DateTime $updatedAt;
+    #[ORM\Column(nullable: true)]
+    private ?DateTime $updatedAt = null;
 
-    /**
-     * @var Collection|Season[]
-     *
-     * @ORM\OneToMany(targetEntity="App\Entity\Season", mappedBy="tvShow")
-     */
-    private Collection $seasons;
+    #[ORM\OneToMany(mappedBy: 'tvShow', targetEntity: Season::class)]
+    private Collection | array $seasons;
 
-    /**
-     * @var Collection|Following[]
-     *
-     * @ORM\OneToMany(targetEntity="App\Entity\Following", mappedBy="tvShow")
-     */
-    private Collection $followings;
+    #[ORM\OneToMany(mappedBy: 'tvShow', targetEntity: Following::class)]
+    private Collection | array $followings;
 
-    /**
-     * @var Collection|Genre[]
-     *
-     * @ORM\ManyToMany(targetEntity="App\Entity\Genre", inversedBy="shows")
-     */
-    private Collection $genres;
+    #[ORM\ManyToMany(targetEntity: Genre::class, inversedBy: 'shows')]
+    private Collection | array $genres;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Type", inversedBy="shows")
-     */
+    #[ORM\ManyToOne(inversedBy: 'shows')]
     private ?Type $type;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Network", inversedBy="shows")
-     */
+    #[ORM\ManyToOne(inversedBy: 'shows')]
     private ?Network $network;
 
     public function __construct()
@@ -144,12 +102,6 @@ class Show
     public function getId(): int
     {
         return $this->id;
-    }
-
-    public function setId(int $id): self
-    {
-        $this->id = $id;
-        return $this;
     }
 
     public function getName(): string
@@ -207,14 +159,15 @@ class Show
         return $this;
     }
 
-    public function getRating(): ?int
+    public function getRating(): ?float
     {
         return $this->rating;
     }
 
-    public function setRating(?int $rating): self
+    public function setRating(?float $rating): self
     {
         $this->rating = $rating;
+
         return $this;
     }
 
@@ -273,15 +226,25 @@ class Show
         return $this;
     }
 
-    public function getIdImdb(): ?int
+    public function getIdImdb(): ?string
     {
         return $this->idImdb;
     }
 
-    public function setIdImdb(?int $idImdb): self
+    public function setIdImdb(?string $idImdb): self
     {
         $this->idImdb = $idImdb;
         return $this;
+    }
+
+    public function getIdTheTvDb(): ?int
+    {
+        return $this->idTheTvDb;
+    }
+
+    public function setIdTheTvDb(?int $idTheTvDb): void
+    {
+        $this->idTheTvDb = $idTheTvDb;
     }
 
     public function getApiUpdate(): ?int
@@ -380,8 +343,8 @@ class Show
 
     public function addGenre(Genre $genre): self
     {
-        if (!$this->genre->contains($genre)) {
-            $this->genre[] = $genre;
+        if (!$this->genres->contains($genre)) {
+            $this->genres[] = $genre;
         }
 
         return $this;
@@ -389,8 +352,8 @@ class Show
 
     public function removeGenre(Genre $genre): self
     {
-        if ($this->genre->contains($genre)) {
-            $this->genre->removeElement($genre);
+        if ($this->genres->contains($genre)) {
+            $this->genres->removeElement($genre);
         }
 
         return $this;

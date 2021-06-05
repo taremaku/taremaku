@@ -2,9 +2,11 @@
 
 namespace App\Factory;
 
-use App\Domain\User\User;
+use App\Entity\User;
 use Zenstruck\Foundry\ModelFactory;
 use Zenstruck\Foundry\Proxy;
+
+use function Zenstruck\Foundry\faker;
 
 /**
  * @method static User|Proxy createOne(array $attributes = [])
@@ -34,10 +36,10 @@ final class UserFactory extends ModelFactory
     {
         return [
             // TODO add your default values here (https://github.com/zenstruck/foundry#model-factories)
-            'username' => self::faker()->userName,
-            'email' => self::faker()->email,
-            'plainPassword' => self::faker()->password,
-            'avatar' => self::faker()->imageUrl(),
+            'username' => faker()->userName,
+            'email' => faker()->email,
+            'plainPassword' => faker()->password(),
+            'avatar' => faker()->imageUrl(),
         ];
     }
 

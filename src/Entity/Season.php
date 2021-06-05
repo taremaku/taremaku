@@ -10,76 +10,45 @@ use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity
- * @ORM\HasLifecycleCallbacks()
- */
+#[ORM\Entity]
+#[ORM\HasLifecycleCallbacks]
 #[ApiResource]
 class Season
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
     private int $id;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Column]
     private int $number;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(nullable: true)]
     private ?string $poster;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
+    #[ORM\Column(nullable: true)]
     private ?int $episodeCount;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
+    #[ORM\Column(nullable: true)]
     private ?DateTime $premiereDate;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
+    #[ORM\Column(nullable: true)]
     private ?DateTime $endDate;
 
-    /**
-     * @ORM\Column(type="datetime_immutable")
-     */
+    #[ORM\Column]
     private DateTimeImmutable $createdAt;
 
-    /**
-     * @ORM\Column(type="datetime")
-     */
-    private DateTime $updatedAt;
+    #[ORM\Column(nullable: true)]
+    private ?DateTime $updatedAt;
 
-    /**
-     * @var Collection|Episode[]
-     *
-     * @ORM\OneToMany(targetEntity="App\Entity\Episode", mappedBy="season")
-     */
-    private ArrayCollection $episodes;
+    #[ORM\OneToMany(mappedBy: 'season', targetEntity: Episode::class)]
+    private Collection | array $episodes;
 
-    /**
-     * @var Collection|Following[]
-     *
-     * @ORM\OneToMany(targetEntity="App\Entity\Following", mappedBy="season")
-     */
-    private Collection $followings;
+    #[ORM\OneToMany(mappedBy: 'season', targetEntity: Following::class)]
+    private Collection | array $followings;
 
-    /**
-     * @var Collection|Show[]
-     *
-     * @ORM\ManyToOne(targetEntity="App\Entity\Show", inversedBy="seasons")
-     */
+    #[ORM\ManyToOne(inversedBy: 'seasons')]
     private Show $tvShow;
 
     public function __construct()
@@ -91,12 +60,6 @@ class Season
     public function getId(): int
     {
         return $this->id;
-    }
-
-    public function setId(int $id): self
-    {
-        $this->id = $id;
-        return $this;
     }
 
     public function getNumber(): int
@@ -165,12 +128,12 @@ class Season
         return $this;
     }
 
-    public function getUpdatedAt(): DateTime
+    public function getUpdatedAt(): ?DateTime
     {
         return $this->updatedAt;
     }
 
-    public function setUpdatedAt(DateTime $updatedAt): self
+    public function setUpdatedAt(?DateTime $updatedAt): self
     {
         $this->updatedAt = $updatedAt;
         return $this;

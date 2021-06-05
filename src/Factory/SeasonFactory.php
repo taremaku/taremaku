@@ -2,7 +2,7 @@
 
 namespace App\Factory;
 
-use App\Domain\Show\Season;
+use App\Entity\Season;
 use Zenstruck\Foundry\ModelFactory;
 use Zenstruck\Foundry\Proxy;
 
@@ -34,11 +34,6 @@ final class SeasonFactory extends ModelFactory
     {
         return [
             // TODO add your default values here (https://github.com/zenstruck/foundry#model-factories)
-            'number' => self::faker()->randomDigit(),
-            'poster' => self::faker()->imageUrl(),
-            'episodeCount' => self::faker()->randomNumber(3),
-            'premiereDate' => self::faker()->dateTimeBetween('-10 years'),
-            'endDate' => self::faker()->dateTimeBetween('-9 years')
         ];
     }
 

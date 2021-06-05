@@ -2,7 +2,7 @@
 
 namespace App\Factory;
 
-use App\Domain\Show\Network;
+use App\Entity\Network;
 use Zenstruck\Foundry\ModelFactory;
 use Zenstruck\Foundry\Proxy;
 
@@ -34,7 +34,6 @@ final class NetworkFactory extends ModelFactory
     {
         return [
             // TODO add your default values here (https://github.com/zenstruck/foundry#model-factories)
-            'name' => self::faker()->word()
         ];
     }
 

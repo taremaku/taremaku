@@ -2,7 +2,7 @@
 
 namespace App\Factory;
 
-use App\Domain\Show\Following;
+use App\Entity\Following;
 use Zenstruck\Foundry\ModelFactory;
 use Zenstruck\Foundry\Proxy;
 
@@ -34,9 +34,6 @@ final class FollowingFactory extends ModelFactory
     {
         return [
             // TODO add your default values here (https://github.com/zenstruck/foundry#model-factories)
-            'startDate' => self::faker()->dateTimeBetween('-10 years'),
-            'endDate' => self::faker()->dateTimeBetween('-9 years'),
-            'status' => self::faker()->randomDigit(),
         ];
     }
 

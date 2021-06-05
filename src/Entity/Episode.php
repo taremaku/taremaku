@@ -11,71 +11,54 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity
- * @ORM\HasLifecycleCallbacks()
- */
+#[ORM\Entity]
+#[ORM\HasLifecycleCallbacks]
 #[ApiResource]
 class Episode
 {
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
     private int $id;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column]
     private string $name;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Column]
     private int $number;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
+    #[ORM\Column(nullable: true)]
     private ?int $runtime;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(nullable: true)]
     private ?string $summary;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
+    #[ORM\Column(nullable: true)]
     private ?DateTime $airstamp;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(nullable: true)]
+    private ?DateTime $airdate;
+
+    #[ORM\Column(nullable: true)]
+    private ?DateTime $airtime;
+
+    #[ORM\Column(nullable: true)]
     private ?string $image;
 
-    /**
-     * @ORM\Column(type="datetime_immutable")
-     */
+    #[ORM\Column]
     private DateTimeImmutable $createdAt;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
+    #[ORM\Column(nullable: true)]
     private ?DateTime $updatedAt;
 
     /**
      * @var Collection|Following[]
-     *
-     * @ORM\OneToMany(targetEntity="App\Entity\Following", mappedBy="episode")
      */
+    #[ORM\OneToMany(mappedBy: 'episode', targetEntity: Following::class)]
     private Collection $followings;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Season", inversedBy="episodes")
-     */
-    private Season $season;
+    #[ORM\ManyToOne(inversedBy: 'episodes')]
+    private ?Season $season;
 
     public function __construct()
     {
@@ -85,13 +68,6 @@ class Episode
     public function getId(): int
     {
         return $this->id;
-    }
-
-    public function setId(int $id): self
-    {
-        $this->id = $id;
-
-        return $this;
     }
 
     public function getName(): string
@@ -154,6 +130,26 @@ class Episode
         return $this;
     }
 
+    public function getAirdate(): ?DateTime
+    {
+        return $this->airdate;
+    }
+
+    public function setAirdate(?DateTime $airdate): void
+    {
+        $this->airdate = $airdate;
+    }
+
+    public function getAirtime(): ?DateTime
+    {
+        return $this->airtime;
+    }
+
+    public function setAirtime(?DateTime $airtime): void
+    {
+        $this->airtime = $airtime;
+    }
+
     public function getImage(): ?string
     {
         return $this->image;
@@ -199,7 +195,7 @@ class Episode
     {
         if (!$this->followings->contains($following)) {
             $this->followings[] = $following;
-            $following->setSeason($this);
+            $following->setEpisode($this);
         }
 
         return $this;
@@ -210,8 +206,8 @@ class Episode
         if ($this->followings->contains($following)) {
             $this->followings->removeElement($following);
             // set the owning side to null (unless already changed)
-            if ($following->getSeason() === $this) {
-                $following->setSeason(null);
+            if ($following->getEpisode() === $this) {
+                $following->setEpisode(null);
             }
         }
 

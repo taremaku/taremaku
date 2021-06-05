@@ -12,45 +12,31 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity
- * @ORM\HasLifecycleCallbacks()
- */
+#[ORM\Entity]
+#[ORM\HasLifecycleCallbacks]
 #[ApiResource(
-    itemOperations: ['get', 'put', 'patch'],
     collectionOperations: ['get', 'post'],
+    itemOperations: ['get', 'put', 'patch'],
 )]
 class Network
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
     private int $id;
 
-    /**
-     * @ORM\Column(type="string", length=32)
-     */
+    #[ORM\Column(length: 32)]
     #[Assert\NotBlank]
     private string $name;
 
-    /**
-     * @ORM\Column(type="datetime_immutable")
-     */
+    #[ORM\Column]
     private DateTimeImmutable $createdAt;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
+    #[ORM\Column(nullable: true)]
     private ?DateTime $updatedAt;
 
-    /**
-     * @var Collection|Show[]
-     *
-     * @ORM\OneToMany(targetEntity="App\Entity\Show", mappedBy="network")
-     */
-    private Collection $shows;
+    #[ORM\OneToMany(mappedBy: 'network', targetEntity: Show::class)]
+    private Collection | array $shows;
 
     public function __construct()
     {
@@ -60,12 +46,6 @@ class Network
     public function getId(): int
     {
         return $this->id;
-    }
-
-    public function setId(int $id): self
-    {
-        $this->id = $id;
-        return $this;
     }
 
     public function getName(): string
@@ -110,7 +90,7 @@ class Network
     {
         if (!$this->shows->contains($show)) {
             $this->shows[] = $show;
-            $show->addGenre($this);
+            $show->setNetwork($this);
         }
 
         return $this;
@@ -120,7 +100,7 @@ class Network
     {
         if ($this->shows->contains($show)) {
             $this->shows->removeElement($show);
-            $show->removeGenre($this);
+            $show->setNetwork(null);
         }
 
         return $this;

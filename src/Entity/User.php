@@ -10,74 +10,57 @@ use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Serializable;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ORM\Entity
- * @ORM\HasLifecycleCallbacks()
+ * @method string getUserIdentifier()
  */
+#[ORM\Entity]
+#[ORM\Table(name: "`user`")]
+#[ORM\HasLifecycleCallbacks]
 #[ApiResource(
-    itemOperations: ['get', 'put', 'patch'],
     collectionOperations: ['get', 'post'],
+    itemOperations: ['get', 'put', 'patch'],
 )]
-class User
+class User implements UserInterface, PasswordAuthenticatedUserInterface, Serializable
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
     private int $id;
 
-    /**
-     * @ORM\Column(type="string")
-     */
+    #[ORM\Column]
     #[Assert\NotBlank]
     private string $username;
 
-    /**
-     * @ORM\Column(type="string")
-     */
+    #[ORM\Column]
     #[Assert\NotBlank]
     private string $email;
 
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
+    #[ORM\Column(nullable: true)]
     private ?string $plainPassword = null;
 
-    /**
-     * @ORM\Column(type="string")
-     */
+    #[ORM\Column]
     private string $password;
 
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
+    #[ORM\Column(nullable: true)]
     private ?string $avatar;
 
-    /**
-     * @ORM\Column(type="datetime_immutable")
-     */
+    #[ORM\Column]
     private DateTimeImmutable $createdAt;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
+    #[ORM\Column(nullable: true)]
     private ?DateTime $updatedAt = null;
 
-    /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Role", mappedBy="users")
-     */
+    #[ORM\ManyToOne(targetEntity: Role::class, inversedBy: 'users')]
     #[Assert\NotBlank]
     private Role $role;
 
-    /**
-     * @var Collection|Following[]
-     *
-     * @ORM\ManyToOne(targetEntity="App\Entity\Following", inversedBy="users", fetch="EXTRA_LAZY")
-     */
-    private Collection $followings;
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Following::class, fetch: 'EXTRA_LAZY')]
+    private Collection | array $followings;
 
     public function __construct()
     {
@@ -87,13 +70,6 @@ class User
     public function getId(): int
     {
         return $this->id;
-    }
-
-    public function setId(int $id): self
-    {
-        $this->id = $id;
-
-        return $this;
     }
 
     public function getUsername(): string
@@ -180,18 +156,6 @@ class User
         return $this;
     }
 
-    public function getRole(): Role
-    {
-        return $this->role;
-    }
-
-    public function setRole(Role $role): self
-    {
-        $this->role = $role;
-
-        return $this;
-    }
-
     public function getFollowings(): Collection
     {
         return $this->followings;
@@ -218,5 +182,59 @@ class User
         }
 
         return $this;
+    }
+
+    public function getRoles(): array
+    {
+        return [$this->getRole()->getCode()];
+    }
+
+    public function getRole(): Role
+    {
+        return $this->role;
+    }
+
+    public function setRole(Role $role): self
+    {
+        $this->role = $role;
+
+        return $this;
+    }
+
+    public function getSalt(): ?string
+    {
+        return null;
+    }
+
+    public function eraseCredentials(): void
+    {
+        $this->plainPassword = null;
+    }
+
+    public function __call(string $name, array $arguments): int
+    {
+        return $this->id;
+    }
+
+    public function serialize(): ?string
+    {
+        return serialize(
+            [
+                $this->id,
+                $this->username,
+                $this->password,
+                $this->role,
+            ]
+        );
+    }
+
+    public function unserialize($data): void
+    {
+        list(
+            $this->id,
+            $this->username,
+            $this->password,
+            $this->role,
+            ) = unserialize($data, ['allowed_classes' => false]);
     }
 }

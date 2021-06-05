@@ -2,7 +2,7 @@
 
 namespace App\Factory;
 
-use App\Domain\Show\Episode;
+use App\Entity\Episode;
 use Zenstruck\Foundry\ModelFactory;
 use Zenstruck\Foundry\Proxy;
 
@@ -34,12 +34,6 @@ final class EpisodeFactory extends ModelFactory
     {
         return [
             // TODO add your default values here (https://github.com/zenstruck/foundry#model-factories)
-            'name' => self::faker()->sentence(5),
-            'number' => self::faker()->randomDigitNotZero(),
-            'runtime' => self::faker()->randomNumber(2),
-            'summary' => self::faker()->paragraph(5),
-            'airstamp' => self::faker()->dateTime(),
-            'image' => self::faker()->imageUrl(),
         ];
     }
 

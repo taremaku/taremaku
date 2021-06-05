@@ -4,12 +4,19 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
+    provider_api: '%env(trim:string:PROVIDER_API)%'
+    provider_api_key: '%env(trim:string:PROVIDER_API_KEY)%'
+    provider_api_secret: '%env(trim:string:PROVIDER_API_SECRET)%'
 
 services:
     # default configuration for services in *this* file
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+        bind:
+            $providerApi: '%provider_api%'
+            $providerApiKey: '%provider_api_key%'
+            $providerApiSecret: '%provider_api_secret%'
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
@@ -29,3 +36,25 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    App\Service\Provider\AbstractProvider:
+        abstract: true
+        public: true
+        arguments: ['@http_client']
+
+    App\Service\Provider\TvmazeClient:
+        parent: App\Service\Provider\AbstractProvider
+
+    show.srv:
+        alias: App\Service\ShowService
+        public: true
+
+    App\EventListener\EntityChanged:
+        tags:
+            - { name: doctrine.event_listener, event: prePersist }
+            - { name: doctrine.event_listener, event: preUpdate }
+
+    App\EventListener\UserChangePassword:
+        tags:
+            - { name: doctrine.event_listener, event: prePersist }
+            - { name: doctrine.event_listener, event: preUpdate }
