@@ -24,23 +24,23 @@ class Season
     #[ORM\Column]
     private int $number;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private ?string $poster;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private ?int $episodeCount;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private ?DateTime $premiereDate;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private ?DateTime $endDate;
 
     #[ORM\Column]
     private DateTimeImmutable $createdAt;
 
-    #[ORM\Column]
-    private DateTime $updatedAt;
+    #[ORM\Column(nullable: true)]
+    private ?DateTime $updatedAt;
 
     #[ORM\OneToMany(mappedBy: 'season', targetEntity: Episode::class)]
     private Collection $episodes;
@@ -128,12 +128,12 @@ class Season
         return $this;
     }
 
-    public function getUpdatedAt(): DateTime
+    public function getUpdatedAt(): ?DateTime
     {
         return $this->updatedAt;
     }
 
-    public function setUpdatedAt(DateTime $updatedAt): self
+    public function setUpdatedAt(?DateTime $updatedAt): self
     {
         $this->updatedAt = $updatedAt;
         return $this;

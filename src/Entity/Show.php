@@ -38,43 +38,43 @@ class Show
     #[Assert\NotBlank]
     private int $status;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private ?string $poster = null;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private ?string $website = null;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private ?float $rating = null;
 
     #[ORM\Column(length: 16)]
     private ?string $language = null;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private string $slug;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private ?int $runtime = null;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private ?string $premiered = null;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private ?int $idTvmaze = null;
 
     #[ORM\Column(length: 8)]
     private ?string $idImdb = null;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private ?int $idTheTvDb = null;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private ?int $apiUpdate = null;
 
     #[ORM\Column]
     private DateTimeImmutable $createdAt;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private ?DateTime $updatedAt = null;
 
     #[ORM\OneToMany(mappedBy: 'tvShow', targetEntity: Season::class)]

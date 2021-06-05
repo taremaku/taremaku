@@ -19,6 +19,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @method string getUserIdentifier()
  */
 #[ORM\Entity]
+#[ORM\Table(name: "`user`")]
 #[ORM\HasLifecycleCallbacks]
 #[ApiResource(
     collectionOperations: ['get', 'post'],
@@ -39,20 +40,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Seriali
     #[Assert\NotBlank]
     private string $email;
 
-    #[ORM\Column]
-    #[Assert\NotCompromisedPassword]
+    #[ORM\Column(nullable: true)]
     private ?string $plainPassword = null;
 
     #[ORM\Column]
     private string $password;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private ?string $avatar;
 
     #[ORM\Column]
     private DateTimeImmutable $createdAt;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private ?DateTime $updatedAt = null;
 
     #[ORM\ManyToOne(targetEntity: Role::class, inversedBy: 'users')]

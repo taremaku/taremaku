@@ -36,7 +36,7 @@ class Role
     #[ORM\Column]
     private DateTimeImmutable $createdAt;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private ?DateTime $updatedAt;
 
     #[ORM\OneToMany(mappedBy: 'role', targetEntity: User::class, fetch: 'EXTRA_LAZY')]

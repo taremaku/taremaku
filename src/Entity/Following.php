@@ -23,7 +23,7 @@ class Following
     #[ORM\Column]
     private DateTimeImmutable $startDate;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private ?DateTime $endDate;
 
     #[ORM\Column]
@@ -33,7 +33,7 @@ class Following
     #[ORM\Column]
     private DateTimeImmutable $createdAt;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private ?DateTime $updatedAt;
 
     #[ORM\ManyToOne(fetch: 'EXTRA_LAZY', inversedBy: 'followings')]

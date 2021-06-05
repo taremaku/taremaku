@@ -32,7 +32,7 @@ class Genre
     #[ORM\Column]
     private DateTimeImmutable $createdAt;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private ?DateTime $updatedAt;
 
     /**

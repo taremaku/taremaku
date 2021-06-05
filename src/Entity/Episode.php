@@ -27,28 +27,28 @@ class Episode
     #[ORM\Column]
     private int $number;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private ?int $runtime;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private ?string $summary;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private ?DateTime $airstamp;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private ?DateTime $airdate;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private ?DateTime $airtime;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private ?string $image;
 
     #[ORM\Column]
     private DateTimeImmutable $createdAt;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private ?DateTime $updatedAt;
 
     /**
