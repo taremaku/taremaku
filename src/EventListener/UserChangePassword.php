@@ -15,8 +15,14 @@ class UserChangePassword
     ) {
     }
 
-    public function prePersist(User $user, LifecycleEventArgs $event): void
+    public function prePersist(LifecycleEventArgs $event): void
     {
+        $user = $event->getObject();
+
+        if (!$user instanceof User) {
+            return;
+        }
+
         $this->hashPassword($user);
     }
 
@@ -36,8 +42,14 @@ class UserChangePassword
         $user->eraseCredentials();
     }
 
-    public function preUpdate(User $user, LifecycleEventArgs $event): void
+    public function preUpdate(LifecycleEventArgs $event): void
     {
+        $user = $event->getObject();
+
+        if (!$user instanceof User) {
+            return;
+        }
+
         $this->hashPassword($user);
     }
 }
