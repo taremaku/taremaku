@@ -49,7 +49,7 @@ class User
     #[ORM\Column]
     private ?DateTime $updatedAt = null;
 
-    #[ORM\ManyToOne(, targetEntity: Role::class, inversedBy: 'users')]
+    #[ORM\ManyToOne(targetEntity: Role::class, inversedBy: 'users')]
     #[Assert\NotBlank]
     private Role $role;
 
