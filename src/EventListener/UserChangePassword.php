@@ -1,0 +1,41 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\EventListener;
+
+use App\Entity\User;
+use Doctrine\Persistence\Event\LifecycleEventArgs;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasher;
+
+class UserChangePassword
+{
+    public function __construct(
+        private UserPasswordHasher $passwordHasher
+    ) {
+    }
+
+    public function prePersist(User $user, LifecycleEventArgs $event): void
+    {
+        $this->hashPassword($user);
+    }
+
+    public function preUpdate(User $user, LifecycleEventArgs $event): void
+    {
+        $this->hashPassword($user);
+    }
+
+    public function hashPassword(User $user): void
+    {
+        if (!$user->getPlainPassword()) {
+            return;
+        }
+
+        $hashed = $this->passwordHasher->hashPassword(
+            $user,
+            $user->getPlainPassword()
+        );
+
+        $user->setPassword($hashed);
+    }
+}

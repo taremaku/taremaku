@@ -48,3 +48,13 @@ services:
     show.srv:
         alias: App\Service\ShowService
         public: true
+
+    App\EventListener\EntityChanged:
+        tags:
+            - { name: doctrine.event_listener, event: prePersist }
+            - { name: doctrine.event_listener, event: preUpdate }
+
+    App\EventListener\UserChangePassword:
+        tags:
+            - { name: doctrine.event_listener, event: prePersist }
+            - { name: doctrine.event_listener, event: preUpdate }
