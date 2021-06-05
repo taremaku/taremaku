@@ -6,6 +6,8 @@ use App\Entity\User;
 use Zenstruck\Foundry\ModelFactory;
 use Zenstruck\Foundry\Proxy;
 
+use function Zenstruck\Foundry\faker;
+
 /**
  * @method static User|Proxy createOne(array $attributes = [])
  * @method static User[]|Proxy[] createMany(int $number, $attributes = [])
@@ -34,10 +36,9 @@ final class UserFactory extends ModelFactory
     {
         return [
             // TODO add your default values here (https://github.com/zenstruck/foundry#model-factories)
-            'username' => self::faker()->userName,
-            'email' => self::faker()->email,
-            'plainPassword' => self::faker()->password,
-            'avatar' => self::faker()->imageUrl(),
+            'username' => faker()->userName,
+            'email' => faker()->email,
+            'avatar' => faker()->imageUrl(),
         ];
     }
 

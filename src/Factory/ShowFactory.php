@@ -34,18 +34,6 @@ final class ShowFactory extends ModelFactory
     {
         return [
             // TODO add your default values here (https://github.com/zenstruck/foundry#model-factories)
-            'name' => self::faker()->sentence(5),
-            'summary' => self::faker()->paragraph(),
-            'status' => self::faker()->randomDigit(),
-            'poster' => self::faker()->imageUrl(),
-            'website' => self::faker()->url,
-            'rating' => self::faker()->randomDigit(),
-            'language' => self::faker()->word(),
-            'runtime' => self::faker()->randomNumber(3),
-            'premiered' => self::faker()->dateTimeBetween('-10 years'),
-            'idTvmaze' => self::faker()->randomNumber(10),
-            'idImdb' => self::faker()->randomNumber(10),
-            'apiUpdate' => self::faker()->randomNumber(10)
         ];
     }
 
