@@ -49,6 +49,8 @@ jobs:
           php-version: ${{ matrix.php-versions }}
           extensions: mbstring, xml, ctype, iconv, intl, dom, filter, gd, iconv, json, pdo, pgsql
 #          coverage: xdebug
+        env:
+          update: true
       - name: Get composer cache directory
         id: composer-cache
         run: echo "::set-output name=dir::$(composer config cache-files-dir)"
