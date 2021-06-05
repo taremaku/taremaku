@@ -21,7 +21,6 @@ class AppFixtures extends Fixture
             [
                 'name' => 'Admin',
                 'code' => 'ROLE_ADMIN',
-                'createdAt' => new \DateTimeImmutable(),
             ]
         );
 
@@ -29,13 +28,11 @@ class AppFixtures extends Fixture
             [
                 'name' => 'User',
                 'code' => 'ROLE_USER',
-                'createdAt' => new \DateTimeImmutable(),
             ]
         );
 
         UserFactory::createMany(3, function () {
             return [
-                'createdAt' => new \DateTimeImmutable(),
                 'role' => RoleFactory::random()
             ];
         });

@@ -38,6 +38,7 @@ final class UserFactory extends ModelFactory
             // TODO add your default values here (https://github.com/zenstruck/foundry#model-factories)
             'username' => faker()->userName,
             'email' => faker()->email,
+            'plainPassword' => faker()->password,
             'avatar' => faker()->imageUrl(),
         ];
     }
