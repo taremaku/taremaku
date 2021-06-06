@@ -32,7 +32,7 @@ class WebChannel
     #[ORM\Column(nullable: true)]
     private ?DateTime $updatedAt;
 
-    #[ORM\OneToMany(mappedBy: 'network', targetEntity: Show::class)]
+    #[ORM\OneToMany(mappedBy: 'webChannel', targetEntity: Show::class)]
     private Collection | array $shows;
 
     public function __construct()
