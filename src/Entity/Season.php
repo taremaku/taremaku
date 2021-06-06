@@ -40,7 +40,7 @@ class Season
     #[ORM\Column(nullable: true)]
     private ?DateTime $updatedAt;
 
-    #[ORM\OneToMany(mappedBy: 'season', targetEntity: Episode::class)]
+    #[ORM\OneToMany(mappedBy: 'season', targetEntity: Episode::class, cascade: ['persist'])]
     private Collection | array $episodes;
 
     #[ORM\OneToMany(mappedBy: 'season', targetEntity: Following::class)]

@@ -87,32 +87,35 @@ class Show
     #[ORM\Column(nullable: true)]
     private ?DateTime $updatedAt = null;
 
-    #[ORM\OneToMany(mappedBy: 'tvShow', targetEntity: Season::class)]
+    #[ORM\OneToMany(mappedBy: 'tvShow', targetEntity: Season::class, cascade: ['persist'])]
     private Collection | array $seasons;
 
     #[ORM\OneToMany(mappedBy: 'tvShow', targetEntity: Following::class)]
     private Collection | array $followings;
 
-    #[ORM\ManyToMany(targetEntity: Genre::class, inversedBy: 'shows')]
+    #[ORM\ManyToMany(targetEntity: Genre::class, inversedBy: 'shows', cascade: ['persist'])]
     private Collection | array $genres;
 
-    #[ORM\ManyToOne(inversedBy: 'shows')]
+    #[ORM\ManyToOne(cascade: ['persist'], inversedBy: 'shows')]
     #[Groups(['search_show'])]
     private ?Type $type;
 
-    #[ORM\ManyToOne(inversedBy: 'shows')]
+    #[ORM\ManyToOne(cascade: ['persist'], inversedBy: 'shows')]
     #[Groups(['search_show'])]
     private ?Network $network = null;
 
-    #[ORM\ManyToOne(inversedBy: 'shows')]
+    #[ORM\ManyToOne(cascade: ['persist'], inversedBy: 'shows')]
     #[Groups(['search_show'])]
     private ?WebChannel $webChannel = null;
+
+    private ?Collection $cast = null;
 
     public function __construct()
     {
         $this->seasons = new ArrayCollection();
         $this->followings = new ArrayCollection();
         $this->genres = new ArrayCollection();
+        $this->cast = new ArrayCollection();
     }
 
     public function getId(): int
@@ -405,6 +408,40 @@ class Show
     public function setWebChannel(?WebChannel $webChannel): self
     {
         $this->webChannel = $webChannel;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|null
+     */
+    public function getCast(): ?Collection
+    {
+        return $this->cast;
+    }
+
+    /**
+     * @param Collection|null $cast
+     */
+    public function setCast(?Collection $cast): void
+    {
+        $this->cast = $cast;
+    }
+
+    public function addCast(\stdClass $cast): self
+    {
+        if (!$this->cast->contains($cast)) {
+            $this->cast[] = $cast;
+        }
+
+        return $this;
+    }
+
+    public function removeCast(\stdClass $cast): self
+    {
+        if ($this->cast->contains($cast)) {
+            $this->cast->removeElement($cast);
+        }
 
         return $this;
     }

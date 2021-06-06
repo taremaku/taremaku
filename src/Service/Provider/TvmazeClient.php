@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Service\Provider;
 
 use App\Entity\Episode;
+use App\Entity\Genre;
 use App\Entity\Network;
 use App\Entity\Season;
 use App\Entity\Show;
@@ -15,7 +16,11 @@ use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
+use stdClass;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
+
+use function json_decode;
+use function str_replace;
 
 class TvmazeClient extends AbstractProvider implements ApiClientInterface
 {
@@ -32,148 +37,18 @@ class TvmazeClient extends AbstractProvider implements ApiClientInterface
         parent::__construct($httpClient, $em);
     }
 
-    public function getShow(int $id): ?Show
-    {
-        $response = $this->doRequest('GET', '/shows/' . $id);
-
-        if ($response->getStatusCode() === 200) {
-            $content = $response->getContent();
-            $content = \json_decode($content);
-
-            $show = new Show();
-            $show->setName($content->name);
-
-            if ($content?->summary) {
-                $show->setSummary($content->summary);
-            }
-
-            $dbType = null;
-            if ($content?->type) {
-                $dbType = $this->em->getRepository(Type::class)->findOneBy(['name' => $content->type]);
-
-                if (is_null($dbType)) {
-                    $dbType = new Type();
-                    $dbType->setName($content->type);
-                }
-            }
-            $show->setType($dbType);
-
-            match ($content->status) {
-                'In Development' => $show->setStatus(Show::STATUS_IN_DEVELOPMENT),
-                'Running' => $show->setStatus(Show::STATUS_RUNNING),
-                default => $show->setStatus(Show::STATUS_ENDED),
-            };
-
-            if ($content?->image?->original) {
-                $show->setPoster(\str_replace('http://', 'https://', $content->image->original));
-            }
-
-            if ($content?->officialSite) {
-                $show->setWebsite(\str_replace('http://', 'https://', $content->officialSite));
-            }
-
-            if ($content?->rating?->average) {
-                $show->setRating($content->rating->average);
-            }
-
-            if ($content?->language) {
-                $show->setLanguage($content->language);
-            }
-
-            if ($content?->runtime) {
-                $show->setRuntime($content->runtime);
-            }
-
-            if ($content?->premiered) {
-                $show->setPremiered($content->premiered);
-            }
-
-            $show->setIdTvmaze($content->id);
-
-            if ($content?->externals?->imdb) {
-                $show->setIdImdb($content->externals->imdb);
-            }
-
-            if ($content?->externals?->thetvdb) {
-                $show->setIdTheTvDb($content->externals->thetvdb);
-            }
-
-            $dbNetwork = null;
-            if ($content?->network?->name) {
-                $dbNetwork = $this->em->getRepository(Network::class)->findOneBy(['name' => $content->network->name]);
-
-                if (is_null($dbNetwork)) {
-                    $dbNetwork = new Network();
-                    $dbNetwork->setName($content->network->name);
-                }
-            }
-            $show->setNetwork($dbNetwork);
-
-            $dbWebChannel = null;
-            if ($content?->webChannel?->name) {
-                $dbWebChannel = $this->em->getRepository(WebChannel::class)->findOneBy(['name' => $content->webChannel->name]);
-
-                if (is_null($dbWebChannel)) {
-                    $dbWebChannel = new WebChannel();
-                    $dbWebChannel->setName($content->webChannel->name);
-                }
-            }
-            $show->setWebChannel($dbWebChannel);
-
-            $show->setApiUpdate($content->updated);
-
-            return $show;
-        }
-
-        return null;
-    }
-
-    public function getSeason(int $id): ?Season
-    {
-        $response = $this->doRequest('GET', '/seasons/' . $id);
-
-        if ($response->getStatusCode() === 200) {
-            $content = $response->getContent();
-            $content = \json_decode($content);
-
-            $season = new Season();
-
-            $season->setNumber($content->number);
-
-            if ($content?->image?->original) {
-                $season->setPoster(\str_replace('http://', 'https://', $content->image->original));
-            }
-
-            if ($content?->episodeOrder) {
-                $season->setEpisodeCount($content->episodeOrder);
-            }
-
-            if ($content?->premiereDate) {
-                $season->setPremiereDate(new DateTime($content->premiereDate));
-            }
-
-            if ($content?->endDate) {
-                $season->setEndDate(new DateTime($content->endDate));
-            }
-
-            return $season;
-        }
-
-        return null;
-    }
-
     public function getSeasons(int $showId): ?Collection
     {
         $response = $this->doRequest('GET', '/shows/' . $showId . '/seasons');
 
         if ($response->getStatusCode() === 200) {
             $content = $response->getContent();
-            $content = \json_decode($content);
+            $content = json_decode($content);
 
             $seasons = new ArrayCollection();
 
             foreach ($content as $season) {
-                $seasons->add($this->getSeason($season->id));
+                $seasons->add($this->populateSeason($season));
             }
 
             return $seasons;
@@ -182,44 +57,42 @@ class TvmazeClient extends AbstractProvider implements ApiClientInterface
         return null;
     }
 
-    public function getEpisode(int $id): ?Episode
+    public function populateSeason(stdClass $responseData): Season
     {
-        $response = $this->doRequest('GET', '/episodes/' . $id);
+        $season = new Season();
+
+        $season->setNumber($responseData->number);
+
+        if ($responseData?->image->original ?? null) {
+            $season->setPoster(str_replace('http://', 'https://', $responseData->image->original));
+        }
+
+        if ($responseData->episodeOrder ?? null) {
+            $season->setEpisodeCount($responseData->episodeOrder);
+        }
+
+        if ($responseData->premiereDate ?? null) {
+            $season->setPremiereDate(new DateTime($responseData->premiereDate));
+        }
+
+        if ($responseData->endDate ?? null) {
+            $season->setEndDate(new DateTime($responseData->endDate));
+        }
+
+        return $season;
+    }
+
+    public function getSeason(int $id): ?Season
+    {
+        $response = $this->doRequest('GET', '/seasons/' . $id);
 
         if ($response->getStatusCode() === 200) {
             $content = $response->getContent();
-            $content = \json_decode($content);
+            $content = json_decode($content);
 
-            $episode = new Episode();
+            $season = $this->populateSeason($content);
 
-            $episode->setName($content->name);
-            $episode->setNumber($content->number);
-
-            if ($content?->runtime) {
-                $episode->setRuntime($content->runtime);
-            }
-
-            if ($content?->summary) {
-                $episode->setSummary($content->summary);
-            }
-
-            if ($content?->airstamp) {
-                $episode->setAirstamp(new DateTime($content->airstamp));
-            }
-
-            if ($content?->airdate) {
-                $episode->setAirdate(new DateTime($content->airdate));
-            }
-
-            if ($content?->airtime) {
-                $episode->setAirtime(new DateTime($content->airtime));
-            }
-
-            if ($content?->image?->original) {
-                $episode->setImage(\str_replace('http://', 'https://', $content->image->original));
-            }
-
-            return $episode;
+            return $season;
         }
 
         return null;
@@ -231,13 +104,76 @@ class TvmazeClient extends AbstractProvider implements ApiClientInterface
 
         if ($response->getStatusCode() === 200) {
             $content = $response->getContent();
-            $content = \json_decode($content);
+            $content = json_decode($content);
 
             $episodes = new ArrayCollection();
 
             foreach ($content as $episode) {
-                $episodes->add($this->getEpisode($episode->id));
+                $episodes->add($this->populateEpisode($episode));
             }
+
+            return $episodes;
+        }
+
+        return null;
+    }
+
+    public function populateEpisode(stdClass $responseData, ?Collection $seasons = null): Episode
+    {
+        $episode = new Episode();
+
+        $episode->setName($responseData->name);
+        $episode->setNumber($responseData->number);
+
+        if ($responseData->runtime ?? null) {
+            $episode->setRuntime($responseData->runtime);
+        }
+
+        if ($responseData->summary ?? null) {
+            $episode->setSummary($responseData->summary);
+        }
+
+        if ($responseData->airstamp ?? null) {
+            $episode->setAirstamp(new DateTime($responseData->airstamp));
+        }
+
+        if ($responseData->airdate ?? null) {
+            $episode->setAirdate(new DateTime($responseData->airdate));
+        }
+
+        if ($responseData->airtime ?? null) {
+            $episode->setAirtime(new DateTime($responseData->airtime));
+        }
+
+        if ($responseData?->image->original ?? null) {
+            $episode->setImage(str_replace('http://', 'https://', $responseData->image->original));
+        }
+
+        if ($seasons) {
+            foreach($seasons as $season) {
+                if ($season->getNumber() === $responseData->season) {
+                    $episode->setSeason($season);
+                    $season->addEpisode($episode);
+
+                    break;
+                }
+            }
+        }
+
+        return $episode;
+    }
+
+    public function getEpisode(int $id): ?Episode
+    {
+        $response = $this->doRequest('GET', '/episodes/' . $id);
+
+        if ($response->getStatusCode() === 200) {
+            $content = $response->getContent();
+            $content = json_decode($content);
+
+            $episode = $this->populateEpisode($content);
+
+            return $episode;
         }
 
         return null;
@@ -249,55 +185,165 @@ class TvmazeClient extends AbstractProvider implements ApiClientInterface
 
         if ($response->getStatusCode() === 200) {
             $content = $response->getContent();
-            $content = \json_decode($content);
+            $content = json_decode($content);
 
             $episodes = new ArrayCollection();
 
             foreach ($content as $episode) {
-                $episodes->add($this->getEpisode($episode->id));
+                $episodes->add($this->populateEpisode($episode));
             }
+
+            return $episodes;
         }
 
         return null;
     }
 
-    public function getCast(int $showId): ?array
+    public function getCast(int $showId): ?Show
     {
-        $response = $this->doRequest('GET', '/shows/' . $showId . '/cast');
+        $response = $this->doRequest('GET', '/shows/' . $showId . '?embed=cast');
 
         if ($response->getStatusCode() === 200) {
             $content = $response->getContent();
-            $content = \json_decode($content);
+            $content = json_decode($content);
 
-            $showCast = [];
+            $showCast = $this->populateShow($content);
 
-            foreach ($showCast as $person) {
-                $imagePerson = null;
-                $imageCharacter = null;
+            $fullCast = null;
+            if ($content?->_embedded->cast ?? null) {
+                $fullCast = $content->_embedded->cast;
+            }
 
-                if ($person?->person?->image?->original) {
-                    $imagePerson = \str_replace('http://', 'https://', $person->person->image->original);
+            if (!empty($fullCast)) {
+                foreach ($fullCast as $person) {
+                    $cast = new stdClass();
+                    $cast->character = new stdClass();
+
+                    $imagePerson = null;
+                    $imageCharacter = null;
+
+                    if ($person?->person?->image->original ?? null) {
+                        $imagePerson = str_replace('http://', 'https://', $person->person->image->original);
+                    }
+
+                    if ($person?->character?->image->original ?? null) {
+                        $imageCharacter = str_replace('http://', 'https://', $person->character->image->original);
+                    }
+
+                    $cast->name = $person->person->name;
+                    $cast->image = $imagePerson;
+                    $cast->character->name = $person->character->name;
+                    $cast->character->image = $imageCharacter;
+
+                    $showCast->addCast($cast);
                 }
-
-                if ($person?->character?->image?->original) {
-                    $imageCharacter = \str_replace('http://', 'https://', $person->character->image->original);
-                }
-
-                $showCast[] = [
-                    $person->name => [
-                        'image' => $imagePerson,
-                        'character' => [
-                            'name' => $person->character->name,
-                            'image' => $imageCharacter,
-                        ]
-                    ]
-                ];
             }
 
             return $showCast;
         }
 
         return null;
+    }
+
+    public function populateShow(stdClass $responseData): Show
+    {
+        $show = new Show();
+        $show->setName($responseData->name);
+
+        if ($responseData->summary ?? null) {
+            $show->setSummary($responseData->summary);
+        }
+
+        $dbType = null;
+        if ($responseData->type ?? null) {
+            $dbType = $this->em->getRepository(Type::class)->findOneBy(['name' => $responseData->type]);
+
+            if (is_null($dbType)) {
+                $dbType = new Type();
+                $dbType->setName($responseData->type);
+            }
+        }
+        $show->setType($dbType);
+
+        if ($responseData?->genres && count($responseData->genres) > 0) {
+            foreach ($responseData->genres as $genre) {
+                $dbGenre = $this->em->getRepository(Genre::class)->findOneBy(['name' => $genre]);
+
+                if (is_null($dbGenre)) {
+                    $dbGenre = new Genre();
+                    $dbGenre->setName($genre);
+                }
+                $show->addGenre($dbGenre);
+            }
+        }
+
+        match ($responseData->status) {
+            'In Development' => $show->setStatus(Show::STATUS_IN_DEVELOPMENT),
+            'Running' => $show->setStatus(Show::STATUS_RUNNING),
+            default => $show->setStatus(Show::STATUS_ENDED),
+        };
+
+        if ($responseData?->image->original ?? null) {
+            $show->setPoster(str_replace('http://', 'https://', $responseData->image->original));
+        }
+
+        if ($responseData->officialSite ?? null) {
+            $show->setWebsite(str_replace('http://', 'https://', $responseData->officialSite));
+        }
+
+        if ($responseData?->rating->average ?? null) {
+            $show->setRating($responseData->rating->average);
+        }
+
+        if ($responseData->language ?? null) {
+            $show->setLanguage($responseData->language);
+        }
+
+        if ($responseData->runtime ?? null) {
+            $show->setRuntime($responseData->runtime);
+        }
+
+        if ($responseData->premiered ?? null) {
+            $show->setPremiered($responseData->premiered);
+        }
+
+        $show->setIdTvmaze($responseData->id);
+
+        if ($responseData?->externals->imdb ?? null) {
+            $show->setIdImdb($responseData->externals->imdb);
+        }
+
+        if ($responseData?->externals->thetvdb ?? null) {
+            $show->setIdTheTvDb($responseData->externals->thetvdb);
+        }
+
+        $dbNetwork = null;
+        if ($responseData?->network->name ?? null) {
+            $dbNetwork = $this->em->getRepository(Network::class)->findOneBy(['name' => $responseData->network->name]);
+
+            if (is_null($dbNetwork)) {
+                $dbNetwork = new Network();
+                $dbNetwork->setName($responseData->network->name);
+            }
+        }
+        $show->setNetwork($dbNetwork);
+
+        $dbWebChannel = null;
+        if ($responseData?->webChannel->name ?? null) {
+            $dbWebChannel = $this->em->getRepository(WebChannel::class)->findOneBy(
+                ['name' => $responseData->webChannel->name]
+            );
+
+            if (is_null($dbWebChannel)) {
+                $dbWebChannel = new WebChannel();
+                $dbWebChannel->setName($responseData->webChannel->name);
+            }
+        }
+        $show->setWebChannel($dbWebChannel);
+
+        $show->setApiUpdate($responseData->updated);
+
+        return $show;
     }
 
     public function searchShow(string $search): ?Collection
@@ -308,13 +354,108 @@ class TvmazeClient extends AbstractProvider implements ApiClientInterface
 
         if ($response->getStatusCode() === 200) {
             $content = $response->getContent();
-            $content = \json_decode($content);
+            $content = json_decode($content);
 
             foreach ($content as $result) {
                 $results->add($this->getShow($result->show->id));
             }
 
             return $results;
+        }
+
+        return null;
+    }
+
+    public function getShow(int $id): ?Show
+    {
+        $response = $this->doRequest('GET', '/shows/' . $id);
+
+        if ($response->getStatusCode() === 200) {
+            $content = $response->getContent();
+            $content = json_decode($content);
+
+            $show = $this->populateShow($content);
+
+            return $show;
+        }
+
+        return null;
+    }
+
+    public function getCastOnly(Show $show): ?Collection
+    {
+        $response = $this->doRequest('GET', '/shows/' . $show->getIdTvmaze() . '/cast');
+
+        if ($response->getStatusCode() === 200) {
+            $content = $response->getContent();
+            $content = json_decode($content);
+
+            $showCast = new ArrayCollection();
+
+            $fullCast = null;
+            if ($content?->_embedded?->cast) {
+                $fullCast = $content->_embedded->cast;
+            }
+
+            foreach ($fullCast as $person) {
+                $cast = new stdClass();
+                $cast->character = new stdClass();
+
+                $imagePerson = null;
+                $imageCharacter = null;
+
+                if ($person?->person?->image->original ?? null) {
+                    $imagePerson = str_replace('http://', 'https://', $person->person->image->original);
+                }
+
+                if ($person?->character?->image->original ?? null) {
+                    $imageCharacter = str_replace('http://', 'https://', $person->character->image->original);
+                }
+
+                $cast->name = $person->person->name;
+                $cast->image = $imagePerson;
+                $cast->character->name = $person->character->name;
+                $cast->character->image = $imageCharacter;
+
+                $showCast->add($cast);
+            }
+
+            return $showCast;
+        }
+
+        return null;
+    }
+
+    public function getShowFull(int $id): ?Show
+    {
+        $response = $this->doRequest('GET', '/shows/' . $id . '?embed[]=seasons&embed[]=episodes');
+
+        if ($response->getStatusCode() === 200) {
+            $content = $response->getContent();
+            $content = json_decode($content);
+
+            $show = $this->populateShow($content);
+
+            $seasons = new ArrayCollection();
+            $episodes = new ArrayCollection();
+
+            if ($content?->_embedded?->seasons && count($content->_embedded->seasons) > 0) {
+                foreach ($content->_embedded->seasons as $apiSeason) {
+                    $season = $this->populateSeason($apiSeason);
+                    $seasons->add($season);
+                    $show->addSeason($season);
+                }
+            }
+
+            if ($content?->_embedded?->episodes && count($content->_embedded->episodes) > 0) {
+                foreach ($content->_embedded->episodes as $episode) {
+                    $episodes->add($this->populateEpisode($episode, $seasons));
+                }
+            }
+
+            dd($show);
+
+            return $show;
         }
 
         return null;
