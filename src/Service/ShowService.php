@@ -4,19 +4,22 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Service\Provider\ProviderService;
+use Doctrine\Common\Collections\Collection;
 
 class ShowService
 {
-    public function __construct(private ProviderService $providerService)
+    public function __construct(private CacheService $cacheService)
     {
     }
 
-    public function searchShow(string $search): ?array
+    /**
+     * @throws \Psr\Cache\InvalidArgumentException
+     */
+    public function searchShow(string $search): ?Collection
     {
         $search = str_replace("+", " ", $search);
 
-        $shows = $this->providerService->getProvider()->searchShow($search);
+        $shows = $this->cacheService->retrieveData('search', $search);
 
         return $shows;
     }

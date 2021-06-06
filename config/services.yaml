@@ -37,6 +37,10 @@ services:
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
 
+    App\Service\SlugService:
+        arguments:
+            $toLower: true
+
     App\Service\Provider\AbstractProvider:
         abstract: true
         public: true
@@ -55,6 +59,11 @@ services:
             - { name: doctrine.event_listener, event: preUpdate }
 
     App\EventListener\UserChangePassword:
+        tags:
+            - { name: doctrine.event_listener, event: prePersist }
+            - { name: doctrine.event_listener, event: preUpdate }
+
+    App\EventListener\Slugifier:
         tags:
             - { name: doctrine.event_listener, event: prePersist }
             - { name: doctrine.event_listener, event: preUpdate }

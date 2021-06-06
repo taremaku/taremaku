@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace App\Service\Provider;
 
 use App\Entity\Episode;
+use App\Entity\Network;
 use App\Entity\Season;
 use App\Entity\Show;
 use App\Entity\Type;
+use App\Entity\WebChannel;
 use App\Service\ApiClient\ApiClientInterface;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -21,19 +23,12 @@ class TvmazeClient extends AbstractProvider implements ApiClientInterface
 
     protected string $providerApiUrl = 'https://api.tvmaze.com';
 
-    protected ?string $providerApiKey = '';
-
-    protected ?string $providerApiSecret = '';
-
     public function __construct(
-        ?string $providerApiKey,
-        ?string $providerApiSecret,
+        protected ?string $providerApiKey,
+        protected ?string $providerApiSecret,
         protected HttpClientInterface $httpClient,
         protected EntityManagerInterface $em
     ) {
-        $this->providerApiKey = $providerApiKey;
-        $this->providerApiSecret = $providerApiSecret;
-
         parent::__construct($httpClient, $em);
     }
 
@@ -102,6 +97,28 @@ class TvmazeClient extends AbstractProvider implements ApiClientInterface
             if ($content?->externals?->thetvdb) {
                 $show->setIdTheTvDb($content->externals->thetvdb);
             }
+
+            $dbNetwork = null;
+            if ($content?->network?->name) {
+                $dbNetwork = $this->em->getRepository(Network::class)->findOneBy(['name' => $content->network->name]);
+
+                if (is_null($dbNetwork)) {
+                    $dbNetwork = new Network();
+                    $dbNetwork->setName($content->network->name);
+                }
+            }
+            $show->setNetwork($dbNetwork);
+
+            $dbWebChannel = null;
+            if ($content?->webChannel?->name) {
+                $dbWebChannel = $this->em->getRepository(WebChannel::class)->findOneBy(['name' => $content->webChannel->name]);
+
+                if (is_null($dbWebChannel)) {
+                    $dbWebChannel = new WebChannel();
+                    $dbWebChannel->setName($content->webChannel->name);
+                }
+            }
+            $show->setWebChannel($dbWebChannel);
 
             $show->setApiUpdate($content->updated);
 
@@ -283,22 +300,18 @@ class TvmazeClient extends AbstractProvider implements ApiClientInterface
         return null;
     }
 
-    public function searchShow(string $search): ?array
+    public function searchShow(string $search): ?Collection
     {
         $response = $this->doRequest('GET', '/search/shows?q=' . $search);
 
-        $results = [];
+        $results = new ArrayCollection();
 
         if ($response->getStatusCode() === 200) {
             $content = $response->getContent();
             $content = \json_decode($content);
 
             foreach ($content as $result) {
-                $results[] = [
-                    $result->score => [
-                        $this->getShow($result->show->id),
-                    ]
-                ];
+                $results->add($this->getShow($result->show->id));
             }
 
             return $results;
