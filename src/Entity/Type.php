@@ -4,20 +4,16 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use DateTime;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity]
 #[ORM\HasLifecycleCallbacks]
-#[ApiResource(
-    collectionOperations: ['get', 'post'],
-    itemOperations: ['get', 'put', 'patch'],
-)]
 class Type
 {
     #[ORM\Id]
@@ -26,6 +22,7 @@ class Type
     private int $id;
 
     #[ORM\Column]
+    #[Groups(['search_show'])]
     #[Assert\NotBlank]
     private string $name;
 

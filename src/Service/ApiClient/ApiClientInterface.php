@@ -18,5 +18,5 @@ interface ApiClientInterface
     public function getEpisodes(int $showId): ?Collection;
     public function getEpisodesFromSeason(int $seasonId): ?Collection;
     public function getCast(int $showId): ?array;
-    public function searchShow(string $search): ?array;
+    public function searchShow(string $search): ?Collection;
 }

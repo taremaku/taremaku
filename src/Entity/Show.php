@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use DateTime;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity]
 #[ORM\HasLifecycleCallbacks]
-#[ApiResource]
+#[ORM\Table(name: 'tvshow')]
 class Show
 {
     public const STATUS_IN_DEVELOPMENT = 0;
@@ -28,38 +28,48 @@ class Show
     private int $id;
 
     #[ORM\Column]
+    #[Groups(['search_show'])]
     #[Assert\NotBlank]
     private string $name;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Groups(['search_show'])]
     private ?string $summary = null;
 
     #[ORM\Column(length: 1)]
+    #[Groups(['search_show'])]
     #[Assert\NotBlank]
     private int $status;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['search_show'])]
     private ?string $poster = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['search_show'])]
     private ?string $website = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['search_show'])]
     private ?float $rating = null;
 
     #[ORM\Column(length: 16)]
+    #[Groups(['search_show'])]
     private ?string $language = null;
 
     #[ORM\Column(nullable: true)]
-    private string $slug;
+    private string $slug = '';
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['search_show'])]
     private ?int $runtime = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['search_show'])]
     private ?string $premiered = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['search_show'])]
     private ?int $idTvmaze = null;
 
     #[ORM\Column(length: 8)]
@@ -87,10 +97,16 @@ class Show
     private Collection | array $genres;
 
     #[ORM\ManyToOne(inversedBy: 'shows')]
+    #[Groups(['search_show'])]
     private ?Type $type;
 
     #[ORM\ManyToOne(inversedBy: 'shows')]
-    private ?Network $network;
+    #[Groups(['search_show'])]
+    private ?Network $network = null;
+
+    #[ORM\ManyToOne(inversedBy: 'shows')]
+    #[Groups(['search_show'])]
+    private ?WebChannel $webChannel = null;
 
     public function __construct()
     {
@@ -378,6 +394,18 @@ class Show
     public function setNetwork(?Network $network): self
     {
         $this->network = $network;
+        return $this;
+    }
+
+    public function getWebChannel(): ?WebChannel
+    {
+        return $this->webChannel;
+    }
+
+    public function setWebChannel(?WebChannel $webChannel): self
+    {
+        $this->webChannel = $webChannel;
+
         return $this;
     }
 }

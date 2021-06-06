@@ -5,7 +5,9 @@ services:
     image: thecodingmachine/php:8.0-v4-fpm
     container_name: "${PROJECT_NAME}-php"
     depends_on:
+      - caddy
       - db
+      - redis
     volumes:
       - ./:/var/www/html:rw,cached
       - ./docker/php/conf.d/api-platform.dev.ini:/usr/local/etc/php/conf.d/api-platform.ini
@@ -21,6 +23,7 @@ services:
       PHP_INI_XDEBUG__CLIENT_PORT: 9003
       PHP_INI_XDEBUG__IDEKEY: "${XDEBUG_IDEKEY}"
       PHP_EXTENSION_XDEBUG: 1
+      REDIS_URL: redis
 
       STARTUP_COMMAND_1: composer install
       STARTUP_COMMAND_2: echo 'alias sf="php bin/console"' >> ~/.bashrc
@@ -72,6 +75,12 @@ services:
     volumes:
       - ./docker/db/data:/var/lib/postgresql/data:rw
     restart: unless-stopped
+
+  redis:
+    image: redis:6-alpine
+    container_name: "${PROJECT_NAME}-redis"
+    ports:
+      - "6379:6379"
 
 volumes:
   db_data:
