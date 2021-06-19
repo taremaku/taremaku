@@ -28,51 +28,51 @@ class Show
     private int $id;
 
     #[ORM\Column]
-    #[Groups(['search_show'])]
+    #[Groups(['search_show', 'detailed_show', 'full_show'])]
     #[Assert\NotBlank]
     private string $name;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    #[Groups(['search_show'])]
+    #[Groups(['search_show', 'detailed_show', 'full_show'])]
     private ?string $summary = null;
 
     #[ORM\Column(length: 1)]
-    #[Groups(['search_show'])]
+    #[Groups(['search_show', 'detailed_show', 'full_show'])]
     #[Assert\NotBlank]
     private int $status;
 
     #[ORM\Column(nullable: true)]
-    #[Groups(['search_show'])]
+    #[Groups(['search_show', 'detailed_show', 'full_show'])]
     private ?string $poster = null;
 
     #[ORM\Column(nullable: true)]
-    #[Groups(['search_show'])]
+    #[Groups(['search_show', 'detailed_show', 'full_show'])]
     private ?string $website = null;
 
     #[ORM\Column(nullable: true)]
-    #[Groups(['search_show'])]
+    #[Groups(['search_show', 'detailed_show', 'full_show'])]
     private ?float $rating = null;
 
     #[ORM\Column(length: 16)]
-    #[Groups(['search_show'])]
+    #[Groups(['search_show', 'detailed_show', 'full_show'])]
     private ?string $language = null;
 
     #[ORM\Column(nullable: true)]
     private string $slug = '';
 
     #[ORM\Column(nullable: true)]
-    #[Groups(['search_show'])]
+    #[Groups(['search_show', 'detailed_show', 'full_show'])]
     private ?int $runtime = null;
 
     #[ORM\Column(nullable: true)]
-    #[Groups(['search_show'])]
+    #[Groups(['search_show', 'detailed_show', 'full_show'])]
     private ?string $premiered = null;
 
     #[ORM\Column(nullable: true)]
-    #[Groups(['search_show'])]
+    #[Groups(['search_show', 'detailed_show', 'full_show'])]
     private ?int $idTvmaze = null;
 
-    #[ORM\Column(length: 8)]
+    #[ORM\Column(length: 12)]
     private ?string $idImdb = null;
 
     #[ORM\Column(nullable: true)]
@@ -87,27 +87,30 @@ class Show
     #[ORM\Column(nullable: true)]
     private ?DateTime $updatedAt = null;
 
-    #[ORM\OneToMany(mappedBy: 'tvShow', targetEntity: Season::class, cascade: ['persist'])]
+    #[ORM\OneToMany(mappedBy: 'tvShow', targetEntity: Season::class, cascade: ['persist'], fetch: 'EAGER')]
+    #[Groups(['full_show'])]
     private Collection | array $seasons;
 
-    #[ORM\OneToMany(mappedBy: 'tvShow', targetEntity: Following::class)]
+    #[ORM\OneToMany(mappedBy: 'tvShow', targetEntity: Following::class, fetch: 'EAGER')]
     private Collection | array $followings;
 
     #[ORM\ManyToMany(targetEntity: Genre::class, inversedBy: 'shows', cascade: ['persist'])]
+    #[Groups(['full_show'])]
     private Collection | array $genres;
 
-    #[ORM\ManyToOne(cascade: ['persist'], inversedBy: 'shows')]
-    #[Groups(['search_show'])]
-    private ?Type $type;
+    #[ORM\ManyToOne(cascade: ['persist'], fetch: 'EAGER', inversedBy: 'shows')]
+    #[Groups(['search_show', 'detailed_show', 'full_show'])]
+    private ?Type $type = null;
 
-    #[ORM\ManyToOne(cascade: ['persist'], inversedBy: 'shows')]
-    #[Groups(['search_show'])]
+    #[ORM\ManyToOne(cascade: ['persist'], fetch: 'EAGER', inversedBy: 'shows')]
+    #[Groups(['search_show', 'detailed_show', 'full_show'])]
     private ?Network $network = null;
 
-    #[ORM\ManyToOne(cascade: ['persist'], inversedBy: 'shows')]
-    #[Groups(['search_show'])]
+    #[ORM\ManyToOne(cascade: ['persist'], fetch: 'EAGER', inversedBy: 'shows')]
+    #[Groups(['search_show', 'detailed_show', 'full_show'])]
     private ?WebChannel $webChannel = null;
 
+    #[Groups(['detailed_show'])]
     private ?Collection $cast = null;
 
     public function __construct()
@@ -431,7 +434,7 @@ class Show
     public function addCast(\stdClass $cast): self
     {
         if (!$this->cast->contains($cast)) {
-            $this->cast[] = $cast;
+            $this->cast->add($cast);
         }
 
         return $this;

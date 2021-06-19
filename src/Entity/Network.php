@@ -22,7 +22,7 @@ class Network
     private int $id;
 
     #[ORM\Column(length: 32)]
-    #[Groups(['search_show'])]
+    #[Groups(['search_show', 'detailed_show', 'full_show'])]
     #[Assert\NotBlank]
     private string $name;
 

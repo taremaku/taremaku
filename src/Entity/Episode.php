@@ -8,7 +8,9 @@ use DateTime;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity]
 #[ORM\HasLifecycleCallbacks]
@@ -20,27 +22,35 @@ class Episode
     private int $id;
 
     #[ORM\Column]
+    #[Groups(['full_show', 'detailed_show'])]
     private string $name;
 
     #[ORM\Column]
+    #[Groups(['full_show', 'detailed_show'])]
     private int $number;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['full_show', 'detailed_show'])]
     private ?int $runtime;
 
-    #[ORM\Column(nullable: true)]
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Groups(['full_show', 'detailed_show'])]
     private ?string $summary;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['full_show', 'detailed_show'])]
     private ?DateTime $airstamp;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['full_show', 'detailed_show'])]
     private ?DateTime $airdate;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['full_show', 'detailed_show'])]
     private ?DateTime $airtime;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['full_show', 'detailed_show'])]
     private ?string $image;
 
     #[ORM\Column]
@@ -52,7 +62,7 @@ class Episode
     /**
      * @var Collection|Following[]
      */
-    #[ORM\OneToMany(mappedBy: 'episode', targetEntity: Following::class)]
+    #[ORM\OneToMany(mappedBy: 'episode', targetEntity: Following::class, fetch: 'EXTRA_LAZY')]
     private Collection $followings;
 
     #[ORM\ManyToOne(inversedBy: 'episodes')]

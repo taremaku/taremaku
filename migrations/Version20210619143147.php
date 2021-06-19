@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20210606101838 extends AbstractMigration
+final class Version20210619143147 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -30,7 +30,7 @@ final class Version20210606101838 extends AbstractMigration
         $this->addSql('CREATE SEQUENCE type_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE SEQUENCE "user_id_seq" INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE SEQUENCE web_channel_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
-        $this->addSql('CREATE TABLE episode (id INT NOT NULL, season_id INT DEFAULT NULL, name VARCHAR(255) NOT NULL, number INT NOT NULL, runtime INT DEFAULT NULL, summary VARCHAR(255) DEFAULT NULL, airstamp TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, airdate TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, airtime TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, image VARCHAR(255) DEFAULT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE TABLE episode (id INT NOT NULL, season_id INT DEFAULT NULL, name VARCHAR(255) NOT NULL, number INT NOT NULL, runtime INT DEFAULT NULL, summary TEXT DEFAULT NULL, airstamp TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, airdate TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, airtime TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, image VARCHAR(255) DEFAULT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_DDAA1CDA4EC001D1 ON episode (season_id)');
         $this->addSql('COMMENT ON COLUMN episode.created_at IS \'(DC2Type:datetime_immutable)\'');
         $this->addSql('CREATE TABLE following (id INT NOT NULL, user_id INT DEFAULT NULL, episode_id INT DEFAULT NULL, season_id INT DEFAULT NULL, tv_show_id INT DEFAULT NULL, start_date TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, end_date TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, status INT NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, PRIMARY KEY(id))');
@@ -49,7 +49,7 @@ final class Version20210606101838 extends AbstractMigration
         $this->addSql('CREATE TABLE season (id INT NOT NULL, tv_show_id INT DEFAULT NULL, number INT NOT NULL, poster VARCHAR(255) DEFAULT NULL, episode_count INT DEFAULT NULL, premiere_date TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, end_date TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_F0E45BA95E3A35BB ON season (tv_show_id)');
         $this->addSql('COMMENT ON COLUMN season.created_at IS \'(DC2Type:datetime_immutable)\'');
-        $this->addSql('CREATE TABLE tvshow (id INT NOT NULL, type_id INT DEFAULT NULL, network_id INT DEFAULT NULL, web_channel_id INT DEFAULT NULL, name VARCHAR(255) NOT NULL, summary TEXT DEFAULT NULL, status INT NOT NULL, poster VARCHAR(255) DEFAULT NULL, website VARCHAR(255) DEFAULT NULL, rating DOUBLE PRECISION DEFAULT NULL, language VARCHAR(16) NOT NULL, slug VARCHAR(255) DEFAULT NULL, runtime INT DEFAULT NULL, premiered VARCHAR(255) DEFAULT NULL, id_tvmaze INT DEFAULT NULL, id_imdb VARCHAR(8) NOT NULL, id_the_tv_db INT DEFAULT NULL, api_update INT DEFAULT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE TABLE tvshow (id INT NOT NULL, type_id INT DEFAULT NULL, network_id INT DEFAULT NULL, web_channel_id INT DEFAULT NULL, name VARCHAR(255) NOT NULL, summary TEXT DEFAULT NULL, status INT NOT NULL, poster VARCHAR(255) DEFAULT NULL, website VARCHAR(255) DEFAULT NULL, rating DOUBLE PRECISION DEFAULT NULL, language VARCHAR(16) NOT NULL, slug VARCHAR(255) DEFAULT NULL, runtime INT DEFAULT NULL, premiered VARCHAR(255) DEFAULT NULL, id_tvmaze INT DEFAULT NULL, id_imdb VARCHAR(12) NOT NULL, id_the_tv_db INT DEFAULT NULL, api_update INT DEFAULT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_44A9FD06C54C8C93 ON tvshow (type_id)');
         $this->addSql('CREATE INDEX IDX_44A9FD0634128B91 ON tvshow (network_id)');
         $this->addSql('CREATE INDEX IDX_44A9FD06F3951BA6 ON tvshow (web_channel_id)');

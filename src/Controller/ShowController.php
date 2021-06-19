@@ -23,7 +23,7 @@ class ShowController extends AbstractController
     ): Response {
         $searchedShows = $this->showService->searchShow($search);
 
-        return $this->json($searchedShows->toArray(), 200);
+        return $this->json($searchedShows->toArray(), 200, [], ['groups' => 'search_show']);
     }
 
     #[Route(path: '/{id}', name: 'get_show_details', methods: 'GET')]
@@ -33,10 +33,23 @@ class ShowController extends AbstractController
         $detailedShow = $this->showService->getShowDetails($id);
 
         if (empty($detailedShow)) {
-            return $this->json('error: no data', 404);
+            return $this->json(['error' => 'no data'], 404);
         }
 
-        return $this->json($detailedShow, 200);
+        return $this->json($detailedShow, 200, [], ['groups' => 'detailed_show']);
+    }
+
+    #[Route(path: '/{id}/full', name: 'get_show_full', methods: 'GET')]
+    public function getShowFull(
+        int $id
+    ): Response {
+        $fullShow = $this->showService->getShowFull($id);
+
+        if (empty($fullShow)) {
+            return $this->json(['error' => 'no data'], 404);
+        }
+
+        return $this->json($fullShow, 200, [], ['groups' => 'full_show']);
     }
 
     #[Route(path: '/{id}', name: 'save_show', methods: 'POST')]
@@ -46,9 +59,9 @@ class ShowController extends AbstractController
         $show = $this->showService->saveShow($id);
 
         if (empty($show)) {
-            return $this->json('error: no data', 404);
+            return $this->json(['error' => 'no data'], 404);
         }
 
-        return $this->json($show, 200);
+        return $this->json(['message' => 'success'], 200);
     }
 }

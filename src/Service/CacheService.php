@@ -35,6 +35,9 @@ class CacheService
 
             case ShowService::OPERATION_SAVE_SHOW:
                 return $this->searchCache($tag, $itemId, 3600, true);
+
+            case ShowService::OPERATION_GET_SHOW_FULL:
+                return $this->searchCache($tag, $itemId, 3600);
         }
 
         return null;
@@ -45,7 +48,7 @@ class CacheService
      */
     public function searchCache(string $tag, mixed $itemId, int $expirationDuration, bool $registerOnDb = false): mixed
     {
-        $searchedItem = $this->cache->get(
+        return $this->cache->get(
             $tag . '-' . $itemId,
             function (ItemInterface $cacheItem) use ($tag, $itemId, $expirationDuration, $registerOnDb) {
                 if (!$cacheItem->isHit()) {
@@ -63,9 +66,11 @@ class CacheService
                             if ($show) {
                                 $fullCast = $this->provider->getProvider()->getCastOnly($show);
 
-                                foreach ($fullCast as $person) {
-                                    $show->addCast($person);
-                                }
+                                $show->setCast($fullCast);
+
+//                                foreach ($fullCast as $person) {
+//                                    $show->addCast($person);
+//                                }
 
                                 return $show;
                             }
@@ -83,12 +88,21 @@ class CacheService
 
                             return $show;
                         }
+
+                        case ShowService::OPERATION_GET_SHOW_FULL: {
+                            $show = $this->entityManager->getRepository(Show::class)->findOneBy(['id' . $this->providerApi => $itemId]);
+
+                            if ($show) {
+                                return $show;
+                            }
+
+                            return $this->provider->getProvider()->getShowFull($itemId);
+                        }
                     }
                 }
 
                 return $cacheItem;
             }
         );
-        return $searchedItem;
     }
 }

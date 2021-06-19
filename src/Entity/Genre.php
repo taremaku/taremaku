@@ -9,6 +9,7 @@ use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity]
@@ -22,6 +23,7 @@ class Genre
 
     #[ORM\Column(length: 32)]
     #[Assert\NotBlank]
+    #[Groups(['full_show', 'detailed_show'])]
     private string $name;
 
     #[ORM\Column]

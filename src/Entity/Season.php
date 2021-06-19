@@ -9,6 +9,7 @@ use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity]
 #[ORM\HasLifecycleCallbacks]
@@ -20,18 +21,23 @@ class Season
     private int $id;
 
     #[ORM\Column]
+    #[Groups(['full_show', 'detailed_show'])]
     private int $number;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['full_show', 'detailed_show'])]
     private ?string $poster;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['full_show', 'detailed_show'])]
     private ?int $episodeCount;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['full_show', 'detailed_show'])]
     private ?DateTime $premiereDate;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['full_show', 'detailed_show'])]
     private ?DateTime $endDate;
 
     #[ORM\Column]
@@ -40,13 +46,14 @@ class Season
     #[ORM\Column(nullable: true)]
     private ?DateTime $updatedAt;
 
-    #[ORM\OneToMany(mappedBy: 'season', targetEntity: Episode::class, cascade: ['persist'])]
+    #[ORM\OneToMany(mappedBy: 'season', targetEntity: Episode::class, cascade: ['persist'], fetch: 'EAGER')]
+    #[Groups(['full_show', 'detailed_show'])]
     private Collection | array $episodes;
 
-    #[ORM\OneToMany(mappedBy: 'season', targetEntity: Following::class)]
+    #[ORM\OneToMany(mappedBy: 'season', targetEntity: Following::class, fetch: 'EXTRA_LAZY')]
     private Collection | array $followings;
 
-    #[ORM\ManyToOne(inversedBy: 'seasons')]
+    #[ORM\ManyToOne(fetch: 'EXTRA_LAZY', inversedBy: 'seasons')]
     private Show $tvShow;
 
     public function __construct()

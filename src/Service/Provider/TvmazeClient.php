@@ -63,21 +63,10 @@ class TvmazeClient extends AbstractProvider implements ApiClientInterface
 
         $season->setNumber($responseData->number);
 
-        if ($responseData?->image->original ?? null) {
-            $season->setPoster(str_replace('http://', 'https://', $responseData->image->original));
-        }
-
-        if ($responseData->episodeOrder ?? null) {
-            $season->setEpisodeCount($responseData->episodeOrder);
-        }
-
-        if ($responseData->premiereDate ?? null) {
-            $season->setPremiereDate(new DateTime($responseData->premiereDate));
-        }
-
-        if ($responseData->endDate ?? null) {
-            $season->setEndDate(new DateTime($responseData->endDate));
-        }
+        $responseData?->image->original ? $season->setPoster(str_replace('http://', 'https://', $responseData->image->original)) : null;
+        $responseData->episodeOrder ? $season->setEpisodeCount($responseData->episodeOrder) : null;
+        $responseData->premiereDate ? $season->setPremiereDate(new DateTime($responseData->premiereDate)) : null;
+        $responseData->endDate ? $season->setEndDate(new DateTime($responseData->endDate)): null;
 
         return $season;
     }
@@ -125,29 +114,12 @@ class TvmazeClient extends AbstractProvider implements ApiClientInterface
         $episode->setName($responseData->name);
         $episode->setNumber($responseData->number);
 
-        if ($responseData->runtime ?? null) {
-            $episode->setRuntime($responseData->runtime);
-        }
-
-        if ($responseData->summary ?? null) {
-            $episode->setSummary($responseData->summary);
-        }
-
-        if ($responseData->airstamp ?? null) {
-            $episode->setAirstamp(new DateTime($responseData->airstamp));
-        }
-
-        if ($responseData->airdate ?? null) {
-            $episode->setAirdate(new DateTime($responseData->airdate));
-        }
-
-        if ($responseData->airtime ?? null) {
-            $episode->setAirtime(new DateTime($responseData->airtime));
-        }
-
-        if ($responseData?->image->original ?? null) {
-            $episode->setImage(str_replace('http://', 'https://', $responseData->image->original));
-        }
+        $responseData->runtime ? $episode->setRuntime($responseData->runtime) : null;
+        $responseData->summary ? $episode->setSummary($responseData->summary) : null;
+        $responseData->airstamp ? $episode->setAirstamp(new DateTime($responseData->airstamp)) : null;
+        $responseData->airdate ? $episode->setAirdate(new DateTime($responseData->airdate)) : null;
+        $responseData->airtime ? $episode->setAirtime(new DateTime($responseData->airtime)) : null;
+        $responseData?->image->original ? $episode->setImage(str_replace('http://', 'https://', $responseData->image->original)) : null;
 
         if ($seasons) {
             foreach($seasons as $season) {
@@ -209,10 +181,7 @@ class TvmazeClient extends AbstractProvider implements ApiClientInterface
 
             $showCast = $this->populateShow($content);
 
-            $fullCast = null;
-            if ($content?->_embedded->cast ?? null) {
-                $fullCast = $content->_embedded->cast;
-            }
+            $fullCast = $content?->_embedded->cast ?: null;
 
             if (!empty($fullCast)) {
                 foreach ($fullCast as $person) {
@@ -222,13 +191,8 @@ class TvmazeClient extends AbstractProvider implements ApiClientInterface
                     $imagePerson = null;
                     $imageCharacter = null;
 
-                    if ($person?->person?->image->original ?? null) {
-                        $imagePerson = str_replace('http://', 'https://', $person->person->image->original);
-                    }
-
-                    if ($person?->character?->image->original ?? null) {
-                        $imageCharacter = str_replace('http://', 'https://', $person->character->image->original);
-                    }
+                    $imagePerson = $person?->person?->image->original ? str_replace('http://', 'https://', $person->person->image->original) : null;
+                    $imageCharacter = $person?->character?->image->original ? str_replace('http://', 'https://', $person->character->image->original) : null;
 
                     $cast->name = $person->person->name;
                     $cast->image = $imagePerson;
@@ -250,15 +214,13 @@ class TvmazeClient extends AbstractProvider implements ApiClientInterface
         $show = new Show();
         $show->setName($responseData->name);
 
-        if ($responseData->summary ?? null) {
-            $show->setSummary($responseData->summary);
-        }
+        $responseData->summary ? $show->setSummary($responseData->summary) : null;
 
         $dbType = null;
         if ($responseData->type ?? null) {
             $dbType = $this->em->getRepository(Type::class)->findOneBy(['name' => $responseData->type]);
 
-            if (is_null($dbType)) {
+            if (empty($dbType)) {
                 $dbType = new Type();
                 $dbType->setName($responseData->type);
             }
@@ -269,7 +231,7 @@ class TvmazeClient extends AbstractProvider implements ApiClientInterface
             foreach ($responseData->genres as $genre) {
                 $dbGenre = $this->em->getRepository(Genre::class)->findOneBy(['name' => $genre]);
 
-                if (is_null($dbGenre)) {
+                if (empty($dbGenre)) {
                     $dbGenre = new Genre();
                     $dbGenre->setName($genre);
                 }
@@ -283,45 +245,22 @@ class TvmazeClient extends AbstractProvider implements ApiClientInterface
             default => $show->setStatus(Show::STATUS_ENDED),
         };
 
-        if ($responseData?->image->original ?? null) {
-            $show->setPoster(str_replace('http://', 'https://', $responseData->image->original));
-        }
-
-        if ($responseData->officialSite ?? null) {
-            $show->setWebsite(str_replace('http://', 'https://', $responseData->officialSite));
-        }
-
-        if ($responseData?->rating->average ?? null) {
-            $show->setRating($responseData->rating->average);
-        }
-
-        if ($responseData->language ?? null) {
-            $show->setLanguage($responseData->language);
-        }
-
-        if ($responseData->runtime ?? null) {
-            $show->setRuntime($responseData->runtime);
-        }
-
-        if ($responseData->premiered ?? null) {
-            $show->setPremiered($responseData->premiered);
-        }
+        $responseData?->image->original ? $show->setPoster(str_replace('http://', 'https://', $responseData->image->original)) : null;
+        $responseData->officialSite ? $show->setWebsite(str_replace('http://', 'https://', $responseData->officialSite)) : null;
+        $responseData?->rating->average ? $show->setRating($responseData->rating->average) : null;
+        $responseData->language ? $show->setLanguage($responseData->language) : null;
+        $responseData->runtime ? $show->setRuntime($responseData->runtime) : null;
+        $responseData->premiered ? $show->setPremiered($responseData->premiered) : null;
+        $responseData?->externals->imdb ? $show->setIdImdb($responseData->externals->imdb) : null;
+        $responseData?->externals->thetvdb ? $show->setIdTheTvDb($responseData->externals->thetvdb) : null;
 
         $show->setIdTvmaze($responseData->id);
-
-        if ($responseData?->externals->imdb ?? null) {
-            $show->setIdImdb($responseData->externals->imdb);
-        }
-
-        if ($responseData?->externals->thetvdb ?? null) {
-            $show->setIdTheTvDb($responseData->externals->thetvdb);
-        }
 
         $dbNetwork = null;
         if ($responseData?->network->name ?? null) {
             $dbNetwork = $this->em->getRepository(Network::class)->findOneBy(['name' => $responseData->network->name]);
 
-            if (is_null($dbNetwork)) {
+            if (empty($dbNetwork)) {
                 $dbNetwork = new Network();
                 $dbNetwork->setName($responseData->network->name);
             }
@@ -334,7 +273,7 @@ class TvmazeClient extends AbstractProvider implements ApiClientInterface
                 ['name' => $responseData->webChannel->name]
             );
 
-            if (is_null($dbWebChannel)) {
+            if (empty($dbWebChannel)) {
                 $dbWebChannel = new WebChannel();
                 $dbWebChannel->setName($responseData->webChannel->name);
             }
@@ -388,39 +327,33 @@ class TvmazeClient extends AbstractProvider implements ApiClientInterface
 
         if ($response->getStatusCode() === 200) {
             $content = $response->getContent();
-            $content = json_decode($content);
+            $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
 
             $showCast = new ArrayCollection();
 
-            $fullCast = null;
-            if ($content?->_embedded?->cast) {
-                $fullCast = $content->_embedded->cast;
-            }
+            $fullCast = $content ?: null;
 
-            foreach ($fullCast as $person) {
-                $cast = new stdClass();
-                $cast->character = new stdClass();
+            if (!empty($fullCast)) {
+                foreach ($fullCast as $person) {
+                    $cast = new stdClass();
+                    $cast->character = new stdClass();
 
-                $imagePerson = null;
-                $imageCharacter = null;
+                    $imagePerson = null;
+                    $imageCharacter = null;
 
-                if ($person?->person?->image->original ?? null) {
-                    $imagePerson = str_replace('http://', 'https://', $person->person->image->original);
+                    $imagePerson = $person?->person?->image->original ? str_replace('http://', 'https://', $person->person->image->original) : null;
+                    $imageCharacter = $person?->character?->image->original ? str_replace('http://', 'https://', $person->character->image->original) : null;
+
+                    $cast->name = $person->person->name;
+                    $cast->image = $imagePerson;
+                    $cast->character->name = $person->character->name;
+                    $cast->character->image = $imageCharacter;
+
+                    $showCast->add($cast);
                 }
 
-                if ($person?->character?->image->original ?? null) {
-                    $imageCharacter = str_replace('http://', 'https://', $person->character->image->original);
-                }
-
-                $cast->name = $person->person->name;
-                $cast->image = $imagePerson;
-                $cast->character->name = $person->character->name;
-                $cast->character->image = $imageCharacter;
-
-                $showCast->add($cast);
+                return $showCast;
             }
-
-            return $showCast;
         }
 
         return null;
@@ -452,8 +385,6 @@ class TvmazeClient extends AbstractProvider implements ApiClientInterface
                     $episodes->add($this->populateEpisode($episode, $seasons));
                 }
             }
-
-            dd($show);
 
             return $show;
         }
