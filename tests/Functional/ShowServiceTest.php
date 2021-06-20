@@ -84,7 +84,7 @@ it(
             $url
         );
 
-        $response = json_decode($client->getResponse()->getContent(), false, 512, JSON_THROW_ON_ERROR);
+        $response = json_decode($client->getResponse()->getContent(), false);
 
         $this->assertResponseIsSuccessful();
         expect($response)
@@ -111,7 +111,7 @@ it(
             $url
         );
 
-        $response = json_decode($client->getResponse()->getContent(), false, 512, JSON_THROW_ON_ERROR);
+        $response = json_decode($client->getResponse()->getContent(), false);
 
         $this->assertResponseIsSuccessful();
         expect($response)
@@ -137,7 +137,7 @@ it(
             $url
         );
 
-        $response = json_decode($client->getResponse()->getContent(), false, 512, JSON_THROW_ON_ERROR);
+        $response = json_decode($client->getResponse()->getContent(), false);
 
         $this->assertResponseIsSuccessful();
 
