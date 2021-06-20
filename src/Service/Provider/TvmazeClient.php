@@ -64,7 +64,7 @@ class TvmazeClient extends AbstractProvider implements ApiClientInterface
 
         $season->setNumber($responseData->number);
 
-        $responseData?->image->original ? $season->setPoster(str_replace('http://', 'https://', $responseData->image->original)) : null;
+        $responseData?->image?->original ? $season->setPoster(str_replace('http://', 'https://', $responseData->image->original)) : null;
         $responseData->episodeOrder ? $season->setEpisodeCount($responseData->episodeOrder) : null;
         $responseData->premiereDate ? $season->setPremiereDate(new DateTime($responseData->premiereDate)) : null;
         $responseData->endDate ? $season->setEndDate(new DateTime($responseData->endDate)) : null;
@@ -120,7 +120,7 @@ class TvmazeClient extends AbstractProvider implements ApiClientInterface
         $responseData->airstamp ? $episode->setAirstamp(new DateTime($responseData->airstamp)) : null;
         $responseData->airdate ? $episode->setAirdate(new DateTime($responseData->airdate)) : null;
         $responseData->airtime ? $episode->setAirtime(new DateTime($responseData->airtime)) : null;
-        $responseData?->image->original ? $episode->setImage(str_replace('http://', 'https://', $responseData->image->original)) : null;
+        $responseData?->image?->original ? $episode->setImage(str_replace('http://', 'https://', $responseData->image->original)) : null;
 
         if ($seasons) {
             foreach ($seasons as $season) {
@@ -246,14 +246,14 @@ class TvmazeClient extends AbstractProvider implements ApiClientInterface
             default => $show->setStatus(Show::STATUS_ENDED),
         };
 
-        $responseData?->image->original ? $show->setPoster(str_replace('http://', 'https://', $responseData->image->original)) : null;
+        $responseData?->image?->original ? $show->setPoster(str_replace('http://', 'https://', $responseData->image->original)) : null;
         $responseData->officialSite ? $show->setWebsite(str_replace('http://', 'https://', $responseData->officialSite)) : null;
-        $responseData?->rating->average ? $show->setRating($responseData->rating->average) : null;
+        $responseData?->rating?->average ? $show->setRating($responseData->rating->average) : null;
         $responseData->language ? $show->setLanguage($responseData->language) : null;
         $responseData->runtime ? $show->setRuntime($responseData->runtime) : null;
         $responseData->premiered ? $show->setPremiered($responseData->premiered) : null;
-        $responseData?->externals->imdb ? $show->setIdImdb($responseData->externals->imdb) : null;
-        $responseData?->externals->thetvdb ? $show->setIdTheTvDb($responseData->externals->thetvdb) : null;
+        $responseData?->externals?->imdb ? $show->setIdImdb($responseData->externals->imdb) : null;
+        $responseData?->externals?->thetvdb ? $show->setIdTheTvDb($responseData->externals->thetvdb) : null;
 
         $show->setIdTvmaze($responseData->id);
 
