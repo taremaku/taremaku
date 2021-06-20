@@ -6,7 +6,6 @@ namespace App\Service;
 
 use App\Entity\Show;
 use App\Service\Provider\ProviderService;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Cache\InvalidArgumentException;
 use Symfony\Contracts\Cache\ItemInterface;

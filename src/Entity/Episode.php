@@ -7,7 +7,6 @@ namespace App\Entity;
 use App\Common\Traits\AutoIdentifiableEntityTrait;
 use App\Common\Traits\TimestampableEntityTrait;
 use DateTime;
-use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -18,7 +17,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ORM\HasLifecycleCallbacks]
 class Episode
 {
-
     use AutoIdentifiableEntityTrait;
     use TimestampableEntityTrait;
 
