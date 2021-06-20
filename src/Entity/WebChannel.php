@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Common\Traits\AutoIdentifiableEntityTrait;
+use App\Common\Traits\TimestampableEntityTrait;
 use DateTime;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -16,21 +18,13 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\HasLifecycleCallbacks]
 class WebChannel
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private int $id;
+    use AutoIdentifiableEntityTrait;
+    use TimestampableEntityTrait;
 
     #[ORM\Column(length: 32)]
     #[Groups(['search_show', 'detailed_show', 'full_show'])]
     #[Assert\NotBlank]
     private string $name;
-
-    #[ORM\Column]
-    private DateTimeImmutable $createdAt;
-
-    #[ORM\Column(nullable: true)]
-    private ?DateTime $updatedAt;
 
     #[ORM\OneToMany(mappedBy: 'webChannel', targetEntity: Show::class)]
     private Collection | array $shows;
@@ -53,28 +47,6 @@ class WebChannel
     public function setName(string $name): self
     {
         $this->name = $name;
-        return $this;
-    }
-
-    public function getCreatedAt(): DateTimeImmutable
-    {
-        return $this->createdAt;
-    }
-
-    public function setCreatedAt(DateTimeImmutable $createdAt): self
-    {
-        $this->createdAt = $createdAt;
-        return $this;
-    }
-
-    public function getUpdatedAt(): ?DateTime
-    {
-        return $this->updatedAt;
-    }
-
-    public function setUpdatedAt(?DateTime $updatedAt): self
-    {
-        $this->updatedAt = $updatedAt;
         return $this;
     }
 

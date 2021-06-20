@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service\Provider;
 
+use App\Entity\Cast;
 use App\Entity\Episode;
 use App\Entity\Genre;
 use App\Entity\Network;
@@ -66,7 +67,7 @@ class TvmazeClient extends AbstractProvider implements ApiClientInterface
         $responseData?->image->original ? $season->setPoster(str_replace('http://', 'https://', $responseData->image->original)) : null;
         $responseData->episodeOrder ? $season->setEpisodeCount($responseData->episodeOrder) : null;
         $responseData->premiereDate ? $season->setPremiereDate(new DateTime($responseData->premiereDate)) : null;
-        $responseData->endDate ? $season->setEndDate(new DateTime($responseData->endDate)): null;
+        $responseData->endDate ? $season->setEndDate(new DateTime($responseData->endDate)) : null;
 
         return $season;
     }
@@ -122,7 +123,7 @@ class TvmazeClient extends AbstractProvider implements ApiClientInterface
         $responseData?->image->original ? $episode->setImage(str_replace('http://', 'https://', $responseData->image->original)) : null;
 
         if ($seasons) {
-            foreach($seasons as $season) {
+            foreach ($seasons as $season) {
                 if ($season->getNumber() === $responseData->season) {
                     $episode->setSeason($season);
                     $season->addEpisode($episode);
@@ -335,8 +336,7 @@ class TvmazeClient extends AbstractProvider implements ApiClientInterface
 
             if (!empty($fullCast)) {
                 foreach ($fullCast as $person) {
-                    $cast = new stdClass();
-                    $cast->character = new stdClass();
+                    $cast = new Cast();
 
                     $imagePerson = null;
                     $imageCharacter = null;
@@ -344,10 +344,10 @@ class TvmazeClient extends AbstractProvider implements ApiClientInterface
                     $imagePerson = $person?->person?->image->original ? str_replace('http://', 'https://', $person->person->image->original) : null;
                     $imageCharacter = $person?->character?->image->original ? str_replace('http://', 'https://', $person->character->image->original) : null;
 
-                    $cast->name = $person->person->name;
-                    $cast->image = $imagePerson;
-                    $cast->character->name = $person->character->name;
-                    $cast->character->image = $imageCharacter;
+                    $cast->setName($person->person->name);
+                    $cast->setImage($imagePerson);
+                    $cast->setCharacterName($person->character->name);
+                    $cast->setCharacterImage($imageCharacter);
 
                     $showCast->add($cast);
                 }

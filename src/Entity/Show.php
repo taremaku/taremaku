@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use DateTime;
-use DateTimeImmutable;
+use App\Common\Traits\AutoIdentifiableEntityTrait;
+use App\Common\Traits\TimestampableEntityTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -22,10 +22,8 @@ class Show
     public const STATUS_RUNNING = 1;
     public const STATUS_ENDED = 2;
 
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private int $id;
+    use AutoIdentifiableEntityTrait;
+    use TimestampableEntityTrait;
 
     #[ORM\Column]
     #[Groups(['search_show', 'detailed_show', 'full_show'])]
@@ -81,12 +79,6 @@ class Show
     #[ORM\Column(nullable: true)]
     private ?int $apiUpdate = null;
 
-    #[ORM\Column]
-    private DateTimeImmutable $createdAt;
-
-    #[ORM\Column(nullable: true)]
-    private ?DateTime $updatedAt = null;
-
     #[ORM\OneToMany(mappedBy: 'tvShow', targetEntity: Season::class, cascade: ['persist'], fetch: 'EAGER')]
     #[Groups(['full_show'])]
     private Collection | array $seasons;
@@ -111,7 +103,7 @@ class Show
     private ?WebChannel $webChannel = null;
 
     #[Groups(['detailed_show'])]
-    private ?Collection $cast = null;
+    private ?Collection $cast;
 
     public function __construct()
     {
@@ -119,11 +111,6 @@ class Show
         $this->followings = new ArrayCollection();
         $this->genres = new ArrayCollection();
         $this->cast = new ArrayCollection();
-    }
-
-    public function getId(): int
-    {
-        return $this->id;
     }
 
     public function getName(): string
@@ -280,28 +267,6 @@ class Show
         return $this;
     }
 
-    public function getCreatedAt(): DateTimeImmutable
-    {
-        return $this->createdAt;
-    }
-
-    public function setCreatedAt(DateTimeImmutable $createdAt): self
-    {
-        $this->createdAt = $createdAt;
-        return $this;
-    }
-
-    public function getUpdatedAt(): ?DateTime
-    {
-        return $this->updatedAt;
-    }
-
-    public function setUpdatedAt(?DateTime $updatedAt): self
-    {
-        $this->updatedAt = $updatedAt;
-        return $this;
-    }
-
     public function getSeasons(): Collection
     {
         return $this->seasons;
@@ -415,23 +380,19 @@ class Show
         return $this;
     }
 
-    /**
-     * @return Collection|null
-     */
     public function getCast(): ?Collection
     {
         return $this->cast;
     }
 
-    /**
-     * @param Collection|null $cast
-     */
-    public function setCast(?Collection $cast): void
+    public function setCast(?Collection $cast): self
     {
         $this->cast = $cast;
+
+        return $this;
     }
 
-    public function addCast(\stdClass $cast): self
+    public function addCast(Cast $cast): self
     {
         if (!$this->cast->contains($cast)) {
             $this->cast->add($cast);
@@ -440,7 +401,7 @@ class Show
         return $this;
     }
 
-    public function removeCast(\stdClass $cast): self
+    public function removeCast(Cast $cast): self
     {
         if ($this->cast->contains($cast)) {
             $this->cast->removeElement($cast);

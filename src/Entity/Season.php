@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Common\Traits\AutoIdentifiableEntityTrait;
+use App\Common\Traits\TimestampableEntityTrait;
 use DateTime;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -15,10 +17,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ORM\HasLifecycleCallbacks]
 class Season
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private int $id;
+    use AutoIdentifiableEntityTrait;
+    use TimestampableEntityTrait;
 
     #[ORM\Column]
     #[Groups(['full_show', 'detailed_show'])]
@@ -40,12 +40,6 @@ class Season
     #[Groups(['full_show', 'detailed_show'])]
     private ?DateTime $endDate;
 
-    #[ORM\Column]
-    private DateTimeImmutable $createdAt;
-
-    #[ORM\Column(nullable: true)]
-    private ?DateTime $updatedAt;
-
     #[ORM\OneToMany(mappedBy: 'season', targetEntity: Episode::class, cascade: ['persist'], fetch: 'EAGER')]
     #[Groups(['full_show', 'detailed_show'])]
     private Collection | array $episodes;
@@ -60,11 +54,6 @@ class Season
     {
         $this->episodes = new ArrayCollection();
         $this->followings = new ArrayCollection();
-    }
-
-    public function getId(): int
-    {
-        return $this->id;
     }
 
     public function getNumber(): int
@@ -119,28 +108,6 @@ class Season
     public function setEndDate(?DateTime $endDate): self
     {
         $this->endDate = $endDate;
-        return $this;
-    }
-
-    public function getCreatedAt(): DateTimeImmutable
-    {
-        return $this->createdAt;
-    }
-
-    public function setCreatedAt(DateTimeImmutable $createdAt): self
-    {
-        $this->createdAt = $createdAt;
-        return $this;
-    }
-
-    public function getUpdatedAt(): ?DateTime
-    {
-        return $this->updatedAt;
-    }
-
-    public function setUpdatedAt(?DateTime $updatedAt): self
-    {
-        $this->updatedAt = $updatedAt;
         return $this;
     }
 

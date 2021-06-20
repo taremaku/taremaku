@@ -6,6 +6,7 @@ namespace App\Service;
 
 use App\Entity\Show;
 use App\Service\Provider\ProviderService;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Cache\InvalidArgumentException;
 use Symfony\Contracts\Cache\ItemInterface;
@@ -60,7 +61,7 @@ class CacheService
                     }
 
                     switch ($tag) {
-                        case ShowService::OPERATION_GET_SHOW_DETAILS: {
+                        case ShowService::OPERATION_GET_SHOW_DETAILS:
                             $show = $this->entityManager->getRepository(Show::class)->findOneBy(['id' . $this->providerApi => $itemId]);
 
                             if ($show) {
@@ -68,17 +69,13 @@ class CacheService
 
                                 $show->setCast($fullCast);
 
-//                                foreach ($fullCast as $person) {
-//                                    $show->addCast($person);
-//                                }
-
                                 return $show;
                             }
 
                             return $this->provider->getProvider()->getCast($itemId);
-                        }
+                        
 
-                        case ShowService::OPERATION_SAVE_SHOW: {
+                        case ShowService::OPERATION_SAVE_SHOW:
                             $show = $this->provider->getProvider()->getShowFull($itemId);
 
                             if ($registerOnDb) {
@@ -87,9 +84,9 @@ class CacheService
                             }
 
                             return $show;
-                        }
+                        
 
-                        case ShowService::OPERATION_GET_SHOW_FULL: {
+                        case ShowService::OPERATION_GET_SHOW_FULL:
                             $show = $this->entityManager->getRepository(Show::class)->findOneBy(['id' . $this->providerApi => $itemId]);
 
                             if ($show) {
@@ -97,7 +94,7 @@ class CacheService
                             }
 
                             return $this->provider->getProvider()->getShowFull($itemId);
-                        }
+                        
                     }
                 }
 

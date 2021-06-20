@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Service\SerializerService;
 use App\Service\ShowService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,7 +14,8 @@ use Symfony\Component\Routing\Annotation\Route;
 class ShowController extends AbstractController
 {
     public function __construct(
-        private ShowService $showService
+        private ShowService $showService,
+        private SerializerService $serializerService
     ) {
     }
 
@@ -36,7 +38,7 @@ class ShowController extends AbstractController
             return $this->json(['error' => 'no data'], 404);
         }
 
-        return $this->json($detailedShow, 200, [], ['groups' => 'detailed_show']);
+        return new Response($this->serializerService->serializeResponse($detailedShow), 200, ['Content-Type' => 'application/json']);
     }
 
     #[Route(path: '/{id}/full', name: 'get_show_full', methods: 'GET')]
