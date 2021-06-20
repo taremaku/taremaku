@@ -34,23 +34,23 @@ class Episode
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     #[Groups(['full_show', 'detailed_show'])]
-    private ?string $summary;
+    private ?string $summary = null;
 
     #[ORM\Column(nullable: true)]
     #[Groups(['full_show', 'detailed_show'])]
-    private ?DateTime $airstamp;
+    private ?DateTime $airstamp = null;
 
     #[ORM\Column(nullable: true)]
     #[Groups(['full_show', 'detailed_show'])]
-    private ?DateTime $airdate;
+    private ?DateTime $airdate = null;
 
     #[ORM\Column(nullable: true)]
     #[Groups(['full_show', 'detailed_show'])]
-    private ?DateTime $airtime;
+    private ?DateTime $airtime = null;
 
     #[ORM\Column(nullable: true)]
     #[Groups(['full_show', 'detailed_show'])]
-    private ?string $image;
+    private ?string $image = null;
 
     /**
      * @var Collection|Following[]

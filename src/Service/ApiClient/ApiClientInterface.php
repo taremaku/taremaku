@@ -34,7 +34,7 @@ interface ApiClientInterface
 
     public function getCast(int $showId): ?Show;
 
-    public function getCastOnly(Show $show): ?Collection;
+    public function getCastOnly(Show $show): ?Show;
 
     public function searchShow(string $search): ?Collection;
 }

@@ -6,6 +6,7 @@ namespace App\Service;
 
 use App\Entity\Show;
 use App\Service\Provider\ProviderService;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Cache\InvalidArgumentException;
 use Symfony\Contracts\Cache\ItemInterface;
@@ -64,11 +65,7 @@ class CacheService
                             $show = $this->entityManager->getRepository(Show::class)->findOneBy(['id' . $this->providerApi => $itemId]);
 
                             if ($show) {
-                                $fullCast = $this->provider->getProvider()->getCastOnly($show);
-
-                                $show->setCast($fullCast);
-
-                                return $show;
+                                return $this->provider->getProvider()->getCastOnly($show);
                             }
 
                             return $this->provider->getProvider()->getCast($itemId);

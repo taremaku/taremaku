@@ -25,19 +25,19 @@ class Season
 
     #[ORM\Column(nullable: true)]
     #[Groups(['full_show', 'detailed_show'])]
-    private ?string $poster;
+    private ?string $poster = null;
 
     #[ORM\Column(nullable: true)]
     #[Groups(['full_show', 'detailed_show'])]
-    private ?int $episodeCount;
+    private ?int $episodeCount = 0;
 
     #[ORM\Column(nullable: true)]
     #[Groups(['full_show', 'detailed_show'])]
-    private ?DateTime $premiereDate;
+    private ?DateTime $premiereDate = null;
 
     #[ORM\Column(nullable: true)]
     #[Groups(['full_show', 'detailed_show'])]
-    private ?DateTime $endDate;
+    private ?DateTime $endDate = null;
 
     #[ORM\OneToMany(mappedBy: 'season', targetEntity: Episode::class, cascade: ['persist'], fetch: 'EAGER')]
     #[Groups(['full_show', 'detailed_show'])]

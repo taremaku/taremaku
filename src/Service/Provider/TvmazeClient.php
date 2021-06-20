@@ -182,12 +182,13 @@ class TvmazeClient extends AbstractProvider implements ApiClientInterface
 
             $showCast = $this->populateShow($content);
 
+            $showCast->setCast(new ArrayCollection());
+
             $fullCast = $content?->_embedded->cast ?: null;
 
             if (!empty($fullCast)) {
                 foreach ($fullCast as $person) {
-                    $cast = new stdClass();
-                    $cast->character = new stdClass();
+                    $cast = new Cast();
 
                     $imagePerson = null;
                     $imageCharacter = null;
@@ -195,10 +196,10 @@ class TvmazeClient extends AbstractProvider implements ApiClientInterface
                     $imagePerson = $person?->person?->image?->original ? str_replace('http://', 'https://', $person->person->image->original) : null;
                     $imageCharacter = $person?->character?->image?->original ? str_replace('http://', 'https://', $person->character->image->original) : null;
 
-                    $cast->name = $person->person->name;
-                    $cast->image = $imagePerson;
-                    $cast->character->name = $person->character->name;
-                    $cast->character->image = $imageCharacter;
+                    $cast->setName($person->person->name);
+                    $cast->setImage($imagePerson);
+                    $cast->setCharacterName($person->character->name);
+                    $cast->setCharacterImage($imageCharacter);
 
                     $showCast->addCast($cast);
                 }
@@ -258,7 +259,7 @@ class TvmazeClient extends AbstractProvider implements ApiClientInterface
         $show->setIdTvmaze($responseData->id);
 
         $dbNetwork = null;
-        if ($responseData?->network->name ?? null) {
+        if ($responseData?->network?->name ?? null) {
             $dbNetwork = $this->em->getRepository(Network::class)->findOneBy(['name' => $responseData->network->name]);
 
             if (empty($dbNetwork)) {
@@ -322,7 +323,7 @@ class TvmazeClient extends AbstractProvider implements ApiClientInterface
         return null;
     }
 
-    public function getCastOnly(Show $show): ?Collection
+    public function getCastOnly(Show $show): ?Show
     {
         $response = $this->doRequest('GET', '/shows/' . $show->getIdTvmaze() . '/cast');
 
@@ -330,7 +331,7 @@ class TvmazeClient extends AbstractProvider implements ApiClientInterface
             $content = $response->getContent();
             $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
 
-            $showCast = new ArrayCollection();
+            $show->setCast(new ArrayCollection());
 
             $fullCast = $content ?: null;
 
@@ -349,10 +350,10 @@ class TvmazeClient extends AbstractProvider implements ApiClientInterface
                     $cast->setCharacterName($person->character->name);
                     $cast->setCharacterImage($imageCharacter);
 
-                    $showCast->add($cast);
+                    $show->addCast($cast);
                 }
 
-                return $showCast;
+                return $show;
             }
         }
 

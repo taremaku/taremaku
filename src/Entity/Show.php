@@ -70,7 +70,7 @@ class Show
     #[Groups(['search_show', 'detailed_show', 'full_show'])]
     private ?int $idTvmaze = null;
 
-    #[ORM\Column(length: 12)]
+    #[ORM\Column(length: 12, nullable: true)]
     private ?string $idImdb = null;
 
     #[ORM\Column(nullable: true)]
