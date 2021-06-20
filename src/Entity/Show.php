@@ -103,7 +103,7 @@ class Show
     private ?WebChannel $webChannel = null;
 
     #[Groups(['detailed_show'])]
-    private ?Collection $cast;
+    private ?Collection $cast = null;
 
     public function __construct()
     {
