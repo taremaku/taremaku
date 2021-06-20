@@ -4,60 +4,55 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Common\Traits\AutoIdentifiableEntityTrait;
+use App\Common\Traits\TimestampableEntityTrait;
 use DateTime;
-use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity]
 #[ORM\HasLifecycleCallbacks]
 class Season
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private int $id;
+    use AutoIdentifiableEntityTrait;
+    use TimestampableEntityTrait;
 
     #[ORM\Column]
+    #[Groups(['full_show', 'detailed_show'])]
     private int $number;
 
     #[ORM\Column(nullable: true)]
-    private ?string $poster;
+    #[Groups(['full_show', 'detailed_show'])]
+    private ?string $poster = null;
 
     #[ORM\Column(nullable: true)]
-    private ?int $episodeCount;
+    #[Groups(['full_show', 'detailed_show'])]
+    private ?int $episodeCount = 0;
 
     #[ORM\Column(nullable: true)]
-    private ?DateTime $premiereDate;
+    #[Groups(['full_show', 'detailed_show'])]
+    private ?DateTime $premiereDate = null;
 
     #[ORM\Column(nullable: true)]
-    private ?DateTime $endDate;
+    #[Groups(['full_show', 'detailed_show'])]
+    private ?DateTime $endDate = null;
 
-    #[ORM\Column]
-    private DateTimeImmutable $createdAt;
-
-    #[ORM\Column(nullable: true)]
-    private ?DateTime $updatedAt;
-
-    #[ORM\OneToMany(mappedBy: 'season', targetEntity: Episode::class)]
+    #[ORM\OneToMany(mappedBy: 'season', targetEntity: Episode::class, cascade: ['persist'], fetch: 'EAGER')]
+    #[Groups(['full_show', 'detailed_show'])]
     private Collection | array $episodes;
 
-    #[ORM\OneToMany(mappedBy: 'season', targetEntity: Following::class)]
+    #[ORM\OneToMany(mappedBy: 'season', targetEntity: Following::class, fetch: 'EXTRA_LAZY')]
     private Collection | array $followings;
 
-    #[ORM\ManyToOne(inversedBy: 'seasons')]
+    #[ORM\ManyToOne(fetch: 'EXTRA_LAZY', inversedBy: 'seasons')]
     private Show $tvShow;
 
     public function __construct()
     {
         $this->episodes = new ArrayCollection();
         $this->followings = new ArrayCollection();
-    }
-
-    public function getId(): int
-    {
-        return $this->id;
     }
 
     public function getNumber(): int
@@ -112,28 +107,6 @@ class Season
     public function setEndDate(?DateTime $endDate): self
     {
         $this->endDate = $endDate;
-        return $this;
-    }
-
-    public function getCreatedAt(): DateTimeImmutable
-    {
-        return $this->createdAt;
-    }
-
-    public function setCreatedAt(DateTimeImmutable $createdAt): self
-    {
-        $this->createdAt = $createdAt;
-        return $this;
-    }
-
-    public function getUpdatedAt(): ?DateTime
-    {
-        return $this->updatedAt;
-    }
-
-    public function setUpdatedAt(?DateTime $updatedAt): self
-    {
-        $this->updatedAt = $updatedAt;
         return $this;
     }
 

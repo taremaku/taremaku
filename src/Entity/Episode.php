@@ -4,55 +4,58 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Common\Traits\AutoIdentifiableEntityTrait;
+use App\Common\Traits\TimestampableEntityTrait;
 use DateTime;
-use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity]
 #[ORM\HasLifecycleCallbacks]
 class Episode
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private int $id;
+    use AutoIdentifiableEntityTrait;
+    use TimestampableEntityTrait;
 
     #[ORM\Column]
+    #[Groups(['full_show', 'detailed_show'])]
     private string $name;
 
     #[ORM\Column]
+    #[Groups(['full_show', 'detailed_show'])]
     private int $number;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['full_show', 'detailed_show'])]
     private ?int $runtime;
 
-    #[ORM\Column(nullable: true)]
-    private ?string $summary;
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Groups(['full_show', 'detailed_show'])]
+    private ?string $summary = null;
 
     #[ORM\Column(nullable: true)]
-    private ?DateTime $airstamp;
+    #[Groups(['full_show', 'detailed_show'])]
+    private ?DateTime $airstamp = null;
 
     #[ORM\Column(nullable: true)]
-    private ?DateTime $airdate;
+    #[Groups(['full_show', 'detailed_show'])]
+    private ?DateTime $airdate = null;
 
     #[ORM\Column(nullable: true)]
-    private ?DateTime $airtime;
+    #[Groups(['full_show', 'detailed_show'])]
+    private ?DateTime $airtime = null;
 
     #[ORM\Column(nullable: true)]
-    private ?string $image;
-
-    #[ORM\Column]
-    private DateTimeImmutable $createdAt;
-
-    #[ORM\Column(nullable: true)]
-    private ?DateTime $updatedAt;
+    #[Groups(['full_show', 'detailed_show'])]
+    private ?string $image = null;
 
     /**
      * @var Collection|Following[]
      */
-    #[ORM\OneToMany(mappedBy: 'episode', targetEntity: Following::class)]
+    #[ORM\OneToMany(mappedBy: 'episode', targetEntity: Following::class, fetch: 'EXTRA_LAZY')]
     private Collection $followings;
 
     #[ORM\ManyToOne(inversedBy: 'episodes')]
@@ -61,11 +64,6 @@ class Episode
     public function __construct()
     {
         $this->followings = new ArrayCollection();
-    }
-
-    public function getId(): int
-    {
-        return $this->id;
     }
 
     public function getName(): string
@@ -156,30 +154,6 @@ class Episode
     public function setImage(?string $image): self
     {
         $this->image = $image;
-
-        return $this;
-    }
-
-    public function getCreatedAt(): DateTimeImmutable
-    {
-        return $this->createdAt;
-    }
-
-    public function setCreatedAt(DateTimeImmutable $createdAt): self
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    public function getUpdatedAt(): ?DateTime
-    {
-        return $this->updatedAt;
-    }
-
-    public function setUpdatedAt(?DateTime $updatedAt): self
-    {
-        $this->updatedAt = $updatedAt;
 
         return $this;
     }

@@ -32,15 +32,6 @@
     "pestphp/pest-plugin": {
         "version": "v1.0.0"
     },
-    "pestphp/pest-plugin-coverage": {
-        "version": "v1.0.0"
-    },
-    "pestphp/pest-plugin-expectations": {
-        "version": "v1.0.1"
-    },
-    "pestphp/pest-plugin-init": {
-        "version": "v1.1.0"
-    },
     "phar-io/manifest": {
         "version": "2.0.1"
     },

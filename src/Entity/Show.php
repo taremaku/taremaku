@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use DateTime;
-use DateTimeImmutable;
+use App\Common\Traits\AutoIdentifiableEntityTrait;
+use App\Common\Traits\TimestampableEntityTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -22,57 +22,55 @@ class Show
     public const STATUS_RUNNING = 1;
     public const STATUS_ENDED = 2;
 
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private int $id;
+    use AutoIdentifiableEntityTrait;
+    use TimestampableEntityTrait;
 
     #[ORM\Column]
-    #[Groups(['search_show'])]
+    #[Groups(['search_show', 'detailed_show', 'full_show'])]
     #[Assert\NotBlank]
     private string $name;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    #[Groups(['search_show'])]
+    #[Groups(['search_show', 'detailed_show', 'full_show'])]
     private ?string $summary = null;
 
     #[ORM\Column(length: 1)]
-    #[Groups(['search_show'])]
+    #[Groups(['search_show', 'detailed_show', 'full_show'])]
     #[Assert\NotBlank]
     private int $status;
 
     #[ORM\Column(nullable: true)]
-    #[Groups(['search_show'])]
+    #[Groups(['search_show', 'detailed_show', 'full_show'])]
     private ?string $poster = null;
 
     #[ORM\Column(nullable: true)]
-    #[Groups(['search_show'])]
+    #[Groups(['search_show', 'detailed_show', 'full_show'])]
     private ?string $website = null;
 
     #[ORM\Column(nullable: true)]
-    #[Groups(['search_show'])]
+    #[Groups(['search_show', 'detailed_show', 'full_show'])]
     private ?float $rating = null;
 
     #[ORM\Column(length: 16)]
-    #[Groups(['search_show'])]
+    #[Groups(['search_show', 'detailed_show', 'full_show'])]
     private ?string $language = null;
 
     #[ORM\Column(nullable: true)]
     private string $slug = '';
 
     #[ORM\Column(nullable: true)]
-    #[Groups(['search_show'])]
+    #[Groups(['search_show', 'detailed_show', 'full_show'])]
     private ?int $runtime = null;
 
     #[ORM\Column(nullable: true)]
-    #[Groups(['search_show'])]
+    #[Groups(['search_show', 'detailed_show', 'full_show'])]
     private ?string $premiered = null;
 
     #[ORM\Column(nullable: true)]
-    #[Groups(['search_show'])]
+    #[Groups(['search_show', 'detailed_show', 'full_show'])]
     private ?int $idTvmaze = null;
 
-    #[ORM\Column(length: 8)]
+    #[ORM\Column(length: 12, nullable: true)]
     private ?string $idImdb = null;
 
     #[ORM\Column(nullable: true)]
@@ -81,43 +79,38 @@ class Show
     #[ORM\Column(nullable: true)]
     private ?int $apiUpdate = null;
 
-    #[ORM\Column]
-    private DateTimeImmutable $createdAt;
-
-    #[ORM\Column(nullable: true)]
-    private ?DateTime $updatedAt = null;
-
-    #[ORM\OneToMany(mappedBy: 'tvShow', targetEntity: Season::class)]
+    #[ORM\OneToMany(mappedBy: 'tvShow', targetEntity: Season::class, cascade: ['persist'], fetch: 'EAGER')]
+    #[Groups(['full_show'])]
     private Collection | array $seasons;
 
-    #[ORM\OneToMany(mappedBy: 'tvShow', targetEntity: Following::class)]
+    #[ORM\OneToMany(mappedBy: 'tvShow', targetEntity: Following::class, fetch: 'EAGER')]
     private Collection | array $followings;
 
-    #[ORM\ManyToMany(targetEntity: Genre::class, inversedBy: 'shows')]
+    #[ORM\ManyToMany(targetEntity: Genre::class, inversedBy: 'shows', cascade: ['persist'])]
+    #[Groups(['full_show'])]
     private Collection | array $genres;
 
-    #[ORM\ManyToOne(inversedBy: 'shows')]
-    #[Groups(['search_show'])]
-    private ?Type $type;
+    #[ORM\ManyToOne(cascade: ['persist'], fetch: 'EAGER', inversedBy: 'shows')]
+    #[Groups(['search_show', 'detailed_show', 'full_show'])]
+    private ?Type $type = null;
 
-    #[ORM\ManyToOne(inversedBy: 'shows')]
-    #[Groups(['search_show'])]
+    #[ORM\ManyToOne(cascade: ['persist'], fetch: 'EAGER', inversedBy: 'shows')]
+    #[Groups(['search_show', 'detailed_show', 'full_show'])]
     private ?Network $network = null;
 
-    #[ORM\ManyToOne(inversedBy: 'shows')]
-    #[Groups(['search_show'])]
+    #[ORM\ManyToOne(cascade: ['persist'], fetch: 'EAGER', inversedBy: 'shows')]
+    #[Groups(['search_show', 'detailed_show', 'full_show'])]
     private ?WebChannel $webChannel = null;
+
+    #[Groups(['detailed_show'])]
+    private ?Collection $cast = null;
 
     public function __construct()
     {
         $this->seasons = new ArrayCollection();
         $this->followings = new ArrayCollection();
         $this->genres = new ArrayCollection();
-    }
-
-    public function getId(): int
-    {
-        return $this->id;
+        $this->cast = new ArrayCollection();
     }
 
     public function getName(): string
@@ -274,28 +267,6 @@ class Show
         return $this;
     }
 
-    public function getCreatedAt(): DateTimeImmutable
-    {
-        return $this->createdAt;
-    }
-
-    public function setCreatedAt(DateTimeImmutable $createdAt): self
-    {
-        $this->createdAt = $createdAt;
-        return $this;
-    }
-
-    public function getUpdatedAt(): ?DateTime
-    {
-        return $this->updatedAt;
-    }
-
-    public function setUpdatedAt(?DateTime $updatedAt): self
-    {
-        $this->updatedAt = $updatedAt;
-        return $this;
-    }
-
     public function getSeasons(): Collection
     {
         return $this->seasons;
@@ -405,6 +376,36 @@ class Show
     public function setWebChannel(?WebChannel $webChannel): self
     {
         $this->webChannel = $webChannel;
+
+        return $this;
+    }
+
+    public function getCast(): ?Collection
+    {
+        return $this->cast;
+    }
+
+    public function setCast(?Collection $cast): self
+    {
+        $this->cast = $cast;
+
+        return $this;
+    }
+
+    public function addCast(Cast $cast): self
+    {
+        if (!$this->cast->contains($cast)) {
+            $this->cast->add($cast);
+        }
+
+        return $this;
+    }
+
+    public function removeCast(Cast $cast): self
+    {
+        if ($this->cast->contains($cast)) {
+            $this->cast->removeElement($cast);
+        }
 
         return $this;
     }
