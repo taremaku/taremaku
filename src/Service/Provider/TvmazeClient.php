@@ -192,8 +192,8 @@ class TvmazeClient extends AbstractProvider implements ApiClientInterface
                     $imagePerson = null;
                     $imageCharacter = null;
 
-                    $imagePerson = $person?->person?->image->original ? str_replace('http://', 'https://', $person->person->image->original) : null;
-                    $imageCharacter = $person?->character?->image->original ? str_replace('http://', 'https://', $person->character->image->original) : null;
+                    $imagePerson = $person?->person?->image?->original ? str_replace('http://', 'https://', $person->person->image->original) : null;
+                    $imageCharacter = $person?->character?->image?->original ? str_replace('http://', 'https://', $person->character->image->original) : null;
 
                     $cast->name = $person->person->name;
                     $cast->image = $imagePerson;
@@ -341,8 +341,8 @@ class TvmazeClient extends AbstractProvider implements ApiClientInterface
                     $imagePerson = null;
                     $imageCharacter = null;
 
-                    $imagePerson = $person?->person?->image->original ? str_replace('http://', 'https://', $person->person->image->original) : null;
-                    $imageCharacter = $person?->character?->image->original ? str_replace('http://', 'https://', $person->character->image->original) : null;
+                    $imagePerson = $person?->person?->image?->original ? str_replace('http://', 'https://', $person->person->image->original) : null;
+                    $imageCharacter = $person?->character?->image?->original ? str_replace('http://', 'https://', $person->character->image->original) : null;
 
                     $cast->setName($person->person->name);
                     $cast->setImage($imagePerson);
