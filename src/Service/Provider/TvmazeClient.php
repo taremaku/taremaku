@@ -172,7 +172,7 @@ class TvmazeClient extends AbstractProvider implements ApiClientInterface
         return null;
     }
 
-    public function getCast(int $showId): ?Show
+    public function getCast(Show $show, int $showId): ?Show
     {
         $response = $this->doRequest('GET', '/shows/' . $showId . '?embed=cast');
 
@@ -180,7 +180,7 @@ class TvmazeClient extends AbstractProvider implements ApiClientInterface
             $content = $response->getContent();
             $content = json_decode($content);
 
-            $showCast = $this->populateShow($content);
+            $showCast = $this->populateShow($show, $content);
 
             $showCast->setCast(new ArrayCollection());
 
@@ -211,9 +211,8 @@ class TvmazeClient extends AbstractProvider implements ApiClientInterface
         return null;
     }
 
-    public function populateShow(stdClass $responseData): Show
+    public function populateShow(Show $show, stdClass $responseData): Show
     {
-        $show = new Show();
         $show->setName($responseData->name);
 
         $responseData->summary ? $show->setSummary($responseData->summary) : null;
@@ -307,7 +306,7 @@ class TvmazeClient extends AbstractProvider implements ApiClientInterface
         return null;
     }
 
-    public function getShow(int $id): ?Show
+    public function getShow(Show $show, int $id): ?Show
     {
         $response = $this->doRequest('GET', '/shows/' . $id);
 
@@ -315,7 +314,7 @@ class TvmazeClient extends AbstractProvider implements ApiClientInterface
             $content = $response->getContent();
             $content = json_decode($content);
 
-            $show = $this->populateShow($content);
+            $show = $this->populateShow($show, $content);
 
             return $show;
         }
@@ -360,7 +359,7 @@ class TvmazeClient extends AbstractProvider implements ApiClientInterface
         return null;
     }
 
-    public function getShowFull(int $id): ?Show
+    public function getShowFull(Show $show, int $id): ?Show
     {
         $response = $this->doRequest('GET', '/shows/' . $id . '?embed[]=seasons&embed[]=episodes');
 
@@ -368,7 +367,7 @@ class TvmazeClient extends AbstractProvider implements ApiClientInterface
             $content = $response->getContent();
             $content = json_decode($content);
 
-            $show = $this->populateShow($content);
+            $show = $this->populateShow($show, $content);
 
             $seasons = new ArrayCollection();
             $episodes = new ArrayCollection();

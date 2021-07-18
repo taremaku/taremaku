@@ -14,8 +14,9 @@ class ShowService
     public const OPERATION_GET_SHOW_FULL = 'get-show-full';
     public const OPERATION_SAVE_SHOW = 'save-show';
 
-    public function __construct(private CacheService $cacheService)
-    {
+    public function __construct(
+        private CacheService $cacheService
+    ) {
     }
 
     public function searchShow(string $search): ?Collection
@@ -35,12 +36,12 @@ class ShowService
         return $this->cacheService->retrieveData(self::OPERATION_GET_SHOW_FULL, $id);
     }
 
-    public function saveShow(int $id): bool
+    public function saveShow(int $id): Show | bool
     {
         $show = $this->cacheService->retrieveData(self::OPERATION_SAVE_SHOW, $id);
 
         if ($show) {
-            return true;
+            return $show;
         }
 
         return false;

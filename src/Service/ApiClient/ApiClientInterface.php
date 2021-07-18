@@ -12,11 +12,11 @@ use stdClass;
 
 interface ApiClientInterface
 {
-    public function getShow(int $id): ?Show;
+    public function getShow(Show $show, int $id): ?Show;
 
-    public function populateShow(stdClass $responseData): Show;
+    public function populateShow(Show $show, stdClass $responseData): Show;
 
-    public function getShowFull(int $id): ?Show;
+    public function getShowFull(Show $show, int $id): ?Show;
 
     public function getSeason(int $id): ?Season;
 
@@ -32,7 +32,7 @@ interface ApiClientInterface
 
     public function populateEpisode(stdClass $responseData, ?Collection $seasons): Episode;
 
-    public function getCast(int $showId): ?Show;
+    public function getCast(Show $show, int $showId): ?Show;
 
     public function getCastOnly(Show $show): ?Show;
 

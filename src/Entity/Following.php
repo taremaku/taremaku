@@ -33,11 +33,11 @@ class Following
     private ?User $user;
 
     #[ORM\ManyToOne(fetch: 'EXTRA_LAZY', inversedBy: 'followings')]
-    #[Assert\NotBlank]
+    #[ORM\JoinColumn(nullable: true)]
     private ?Episode $episode;
 
-    #[ORM\ManyToOne(fetch: 'EXTRA_LAZY', inversedBy: 'followings')]
-    #[Assert\NotBlank]
+    #[ORM\ManyToOne(fetch: 'EXTRA_LAZY', inversedBy:'followings')]
+    #[ORM\JoinColumn(nullable: true)]
     private ?Season $season;
 
     #[ORM\ManyToOne(fetch: 'EXTRA_LAZY', inversedBy: 'followings')]
@@ -88,7 +88,7 @@ class Following
         return $this;
     }
 
-    public function getEpisode(): Episode
+    public function getEpisode(): ?Episode
     {
         return $this->episode;
     }
@@ -99,12 +99,12 @@ class Following
         return $this;
     }
 
-    public function getSeason(): Season
+    public function getSeason(): ?Season
     {
         return $this->season;
     }
 
-    public function setSeason(Season $season): self
+    public function setSeason(?Season $season): self
     {
         $this->season = $season;
         return $this;

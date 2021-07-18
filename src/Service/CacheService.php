@@ -67,29 +67,37 @@ class CacheService
                                 return $this->provider->getProvider()->getCastOnly($show);
                             }
 
-                            return $this->provider->getProvider()->getCast($itemId);
-                        
+                            $show = new Show();
+
+                            return $this->provider->getProvider()->getCast($show, $itemId);
+
 
                         case ShowService::OPERATION_SAVE_SHOW:
-                            $show = $this->provider->getProvider()->getShowFull($itemId);
+                            $show = $this->entityManager->getRepository(Show::class)->findOneBy(['id' . $this->providerApi => $itemId]);
 
-                            if ($registerOnDb) {
+                            if (!$show) {
+                                $show = new Show();
+                            }
+
+                            $show = $this->provider->getProvider()->getShowFull($show, $itemId);
+
+                            if ($registerOnDb && is_null($show->getId())) {
                                 $this->entityManager->persist($show);
                                 $this->entityManager->flush();
                             }
 
                             return $show;
-                        
+
 
                         case ShowService::OPERATION_GET_SHOW_FULL:
                             $show = $this->entityManager->getRepository(Show::class)->findOneBy(['id' . $this->providerApi => $itemId]);
 
-                            if ($show) {
-                                return $show;
+                            if (!$show) {
+                                $show = new Show();
                             }
 
-                            return $this->provider->getProvider()->getShowFull($itemId);
-                        
+                            return $this->provider->getProvider()->getShowFull($show, $itemId);
+
                     }
                 }
 

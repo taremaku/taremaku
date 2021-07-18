@@ -4,16 +4,17 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Common\Traits\AutoIdentifiableEntityTrait;
-use App\Common\Traits\TimestampableEntityTrait;
 use DateTime;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\EpisodeRepository;
+use Doctrine\Common\Collections\Collection;
+use App\Common\Traits\TimestampableEntityTrait;
+use Doctrine\Common\Collections\ArrayCollection;
+use App\Common\Traits\AutoIdentifiableEntityTrait;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: EpisodeRepository::class)]
 #[ORM\HasLifecycleCallbacks]
 class Episode
 {

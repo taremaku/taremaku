@@ -13,9 +13,10 @@
 
 // uses(Tests\TestCase::class)->in('Feature');
 use App\Tests\Helpers\ShowServiceHelper;
+use App\Tests\Helpers\FollowingServiceHelper;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-uses(WebTestCase::class, ShowServiceHelper::class)->in('Functional');
+uses(WebTestCase::class, ShowServiceHelper::class, FollowingServiceHelper::class)->in('Functional');
 
 /*
 |--------------------------------------------------------------------------
