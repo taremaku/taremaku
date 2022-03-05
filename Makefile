@@ -12,12 +12,12 @@ ifeq ($(isDocker), 1)
 	dr := $(dc) run --rm
 	sy := $(de) php bin/console
 	drtest := $(dc) -f docker-compose.test.yml run --rm
-	php := $(dr) --no-deps php
+	php := $(de) --no-deps php
 else
 	de :=
 	sy := php bin/console
 	node :=
-	php :=
+	php := php
 endif
 
 COMPOSER = $(dc) composer
@@ -96,7 +96,7 @@ test-report: phpunit.xml* test-load-fixtures ## Launch main functionnal and unit
 
 ## —— Coding standards ✨ ——————————————————————————————————————————————————————
 ecs: ## Run ECS only
-	php ./vendor/bin/ecs check --memory-limit 256M
+	$(php) ./vendor/bin/ecs check --memory-limit 256M
 
 ecs-fix: ## Run php-cs-fixer and fix the code.
-	php ./vendor/bin/ecs check --fix --memory-limit 256M
+	$(php) ./vendor/bin/ecs check --fix --memory-limit 256M
