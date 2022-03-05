@@ -8,7 +8,7 @@ endif
 
 ifeq ($(isDocker), 1)
 	dc := USER_ID=$(user) GROUP_ID=$(group) docker-compose
-	de := docker-compose exec
+	de := docker exec -u $(user):$(group) taremaku-php-1
 	dr := $(dc) run --rm
 	sy := $(de) php bin/console
 	drtest := $(dc) -f docker-compose.test.yml run --rm
@@ -27,6 +27,9 @@ CONSOLE = $(dc) php bin/console
 build-docker:
 	$(dc) pull --ignore-pull-failures
 	$(dc) build --no-cache php
+
+dev:
+	$(dc) up -d
 
 install-project: install reset-database generate-jwt ## First installation for setup the project
 
@@ -47,9 +50,9 @@ update: composer.json ## Update vendors according to the composer.json file
 
 ## —— Symfony ————————————————————————————————————————————————————————————————
 cc: ## Apply cache clear
-	$(dc) sh -c "rm -rf var/cache"
+	$(de) sh -c "rm -rf var/cache/*"
 	$(sy) cache:clear
-	$(dc) sh -c "chmod -R 777 var/cache"
+	$(de) sh -c "chmod -R 777 var/cache"
 
 doctrine-validate:
 	$(sy) doctrine:schema:validate --skip-sync $c
