@@ -95,7 +95,7 @@ test-report: phpunit.xml* test-load-fixtures ## Launch main functionnal and unit
 
 ## —— Coding standards ✨ ——————————————————————————————————————————————————————
 ecs: ## Run ECS only
-	$(dc) sh -c "./vendor/bin/ecs check --memory-limit 256M"
+	$(de) sh -c "./vendor/bin/ecs check --memory-limit 256M"
 
 ecs-fix: ## Run php-cs-fixer and fix the code.
-	$(dc) sh -c "./vendor/bin/ecs check --fix"
+	$(de) sh -c "./vendor/bin/ecs check --fix"
