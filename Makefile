@@ -1,4 +1,5 @@
 isDocker := $(shell docker info > /dev/null 2>&1 && echo 1)
+isContainerRunning := $(shell docker ps | grep taremaku-php-1 > /dev/null 2>&1 && echo 1)
 user := $(shell id -u)
 group := $(shell id -g)
 
@@ -6,13 +7,15 @@ ifneq ("$(wildcard .env.local)","")
 include .env.local
 endif
 
-ifeq ($(isDocker), 1)
+ifeq ($(isDocker), $(isContainerRunning), 1)
 	dc := USER_ID=$(user) GROUP_ID=$(group) docker-compose
 	de := docker exec -u $(user):$(group) taremaku-php-1
 	dr := $(dc) run --rm
 	sy := $(de) php bin/console
 	drtest := $(dc) -f docker-compose.test.yml run --rm
-	php := $(dr) --no-deps php
+	php := $(de) --no-deps php
+else ifeq ($(isDocker), 1)
+	dc := USER_ID=$(user) GROUP_ID=$(group) docker-compose
 else
 	de :=
 	sy := php bin/console
@@ -86,17 +89,17 @@ test-load-fixtures: ## load database schema & fixtures
 	$(dc) sh -c "APP_ENV=test php bin/console doctrine:fixtures:load -n"
 
 test: phpunit.xml* ## Launch main functional and unit tests, stopped on failure
-	$(dc) sh -c "APP_ENV=test ./vendor/bin/pest"
+	$(php) APP_ENV=test ./vendor/bin/pest
 
 test-all: phpunit.xml* test-load-fixtures ## Launch main functional and unit tests
-	$(dc) sh -c "APP_ENV=test ./vendor/bin/pest"
+	$(php) APP_ENV=test ./vendor/bin/pest
 
 test-report: phpunit.xml* test-load-fixtures ## Launch main functionnal and unit tests with report
-	$(dc) sh -c "APP_ENV=test ./vendor/bin/pest"
+	$(php) APP_ENV=test ./vendor/bin/pest
 
 ## —— Coding standards ✨ ——————————————————————————————————————————————————————
 ecs: ## Run ECS only
-	php ./vendor/bin/ecs check --memory-limit 256M
+	$(php) ./vendor/bin/ecs check --memory-limit 256M
 
 ecs-fix: ## Run php-cs-fixer and fix the code.
-	php ./vendor/bin/ecs check --fix --memory-limit 256M
+	$(php) ./vendor/bin/ecs check --fix --memory-limit 256M
