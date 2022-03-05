@@ -1,4 +1,6 @@
 {
+    email {env.EMAIL_LETSENCRYPT}
+
     # Debug
     {$DEBUG}
     # HTTP/3 support

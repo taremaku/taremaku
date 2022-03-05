@@ -12,7 +12,7 @@
 !.env.dist
 !.gitkeep
 .idea
-docker/db/data
+docker/db/
 /.ecs_cache
 
 ###> phpunit/phpunit ###

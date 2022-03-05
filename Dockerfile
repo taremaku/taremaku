@@ -18,11 +18,18 @@ RUN apk add --no-cache \
 		gettext \
 		git \
 		gnu-libiconv \
+		sqlite \
 	;
+
+RUN apk add --no-cache bash
 
 # install gnu-libiconv and set LD_PRELOAD env to make iconv work fully on Alpine image.
 # see https://github.com/docker-library/php/issues/240#issuecomment-763112749
 ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so
+
+RUN set -xe \
+	&& apk add --no-cache --virtual .php-deps \
+    make
 
 ARG APCU_VERSION=5.1.21
 RUN set -eux; \
@@ -70,6 +77,8 @@ COPY docker/php/php-fpm.d/zz-docker.conf /usr/local/etc/php-fpm.d/zz-docker.conf
 COPY docker/php/docker-entrypoint.sh /usr/local/bin/docker-entrypoint
 RUN chmod +x /usr/local/bin/docker-entrypoint
 
+RUN mkdir /srv/app/var/db
+
 VOLUME /var/run/php
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -94,11 +103,7 @@ ARG SYMFONY_VERSION=""
 ENV SYMFONY_VERSION ${SYMFONY_VERSION}
 
 # Download the Symfony skeleton and leverage Docker cache layers
-RUN composer create-project "${SKELETON} ${SYMFONY_VERSION}" . --stability=$STABILITY --prefer-dist --no-dev --no-progress --no-interaction; \
-	composer clear-cache
-
-###> recipes ###
-###< recipes ###
+RUN composer create-project "${SKELETON} ${SYMFONY_VERSION}" . --stability=$STABILITY --prefer-dist --no-dev --no-progress --no-interaction;
 
 COPY . .
 
@@ -111,8 +116,13 @@ RUN set -eux; \
 	chmod +x bin/console; sync
 VOLUME /srv/app/var
 
+RUN echo 'alias sf="php bin/console"' >> ~/.bashrc
+RUN echo 'alias pest="php vendor/bin/pest"' >> ~/.bashrc
+RUN echo 'alias ecs="php vendor/bin/ecs"' >> ~/.bashrc
+
 ENTRYPOINT ["docker-entrypoint"]
 CMD ["php-fpm"]
+RUN bash
 
 FROM caddy:${CADDY_VERSION}-builder-alpine AS symfony_caddy_builder
 
