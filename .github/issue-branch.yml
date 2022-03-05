@@ -1,0 +1,12 @@
+branches:
+    - label: enhancement
+      name: develop
+      prefix: feature/
+    - label: bug
+      name: develop
+      prefix: bugfix/
+    - label: hotfix
+      name: main
+      prefix: hotfix/
+
+branchName: '#${issue.number}-${issue.title}'
