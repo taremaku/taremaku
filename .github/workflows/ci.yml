@@ -43,7 +43,7 @@ jobs:
         run: symfony check:security
 
       - name: Static Analysis
-        run: make scan
+        run: make ecs
 
       - name: Lint Doctrine entities
         run: ./bin/console doctrine:schema:validate --skip-sync -vvv --no-interaction
