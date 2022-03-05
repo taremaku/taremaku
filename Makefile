@@ -14,6 +14,7 @@ ifeq ($(isDocker), 1)
 	drtest := $(dc) -f docker-compose.test.yml run --rm
 	php := $(dr) --no-deps php
 else
+	de :=
 	sy := php bin/console
 	node :=
 	php :=
