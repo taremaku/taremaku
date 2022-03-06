@@ -1,5 +1,10 @@
 controllers:
-    resource: ../../src/Controller/
+    resource: ../../src/Infrastructure/Http/Controller/
+    type: annotation
+admin_controllers:
+    name_prefix: admin_
+    prefix: '%admin_prefix%'
+    resource: ../../src/Infrastructure/Http/Admin/Controller/
     type: annotation
 
 kernel:

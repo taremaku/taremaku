@@ -10,15 +10,35 @@ services:
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+        public: true
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
-    App\:
-        resource: '../src/'
-        exclude:
-            - '../src/DependencyInjection/'
-            - '../src/Entity/'
-            - '../src/Kernel.php'
+    Taremaku\:
+        resource: '../src/*'
+        exclude: '../src/{DependencyInjection,Application,Domain,Http,Infrastructure,Entity,Tests,Kernel.php}'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+    Taremaku\Application\:
+        resource: '../src/Application/*'
+
+    Taremaku\Domain\:
+        resource: '../src/Domain/*'
+        exclude: '../src/Domain/*/{Entity}'
+
+    Taremaku\Infrastructure\:
+        resource: '../src/Infrastructure/*'
+        exclude: '../src/Infrastructure/Doctrine/Migrations/*'
+
+    Taremaku\Infrastructure\Http\Controller\:
+        resource: '../src/Infrastructure/Http/Controller'
+        tags: ['controller.service_arguments']
+
+    Taremaku\Infrastructure\Http\Admin\Controller\:
+        resource: '../src/Infrastructure/Http/Admin/Controller'
+        tags: ['controller.service_arguments']
+
+    App\:
+        resource: '../src/'
+        exclude: '../src/{DependencyInjection,Application,Domain,Http,Infrastructure,Entity,Tests,Kernel.php}'

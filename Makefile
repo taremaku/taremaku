@@ -23,7 +23,7 @@ else
 	php :=
 endif
 
-COMPOSER = $(dc) composer
+COMPOSER = $(de) composer
 CONSOLE = $(dc) php bin/console
 
 ## —— App ————————————————————————————————————————————————————————————————
