@@ -7,15 +7,21 @@ ifneq ("$(wildcard .env.local)","")
 include .env.local
 endif
 
-ifeq ($(isDocker), $(isContainerRunning), 1)
-	dc := USER_ID=$(user) GROUP_ID=$(group) docker-compose
-	de := docker exec -u $(user):$(group) taremaku-php-1
-	dr := $(dc) run --rm
-	sy := $(de) php bin/console
-	drtest := $(dc) -f docker-compose.test.yml run --rm
-	php := $(de) --no-deps php
-else ifeq ($(isDocker), 1)
-	dc := USER_ID=$(user) GROUP_ID=$(group) docker-compose
+ifeq ($(isDocker), 1)
+	ifeq ($(isContainerRunning), 1)
+		dc := USER_ID=$(user) GROUP_ID=$(group) docker-compose
+		de := docker exec -u $(user):$(group) taremaku-php-1
+		dr := $(dc) run --rm
+		sy := $(de) php bin/console
+		drtest := $(dc) -f docker-compose.test.yml run --rm
+		php := $(de) --no-deps php
+	else
+		dc := USER_ID=$(user) GROUP_ID=$(group) docker-compose
+		de :=
+		sy := php bin/console
+		node :=
+		php :=
+	endif
 else
 	de :=
 	sy := php bin/console
